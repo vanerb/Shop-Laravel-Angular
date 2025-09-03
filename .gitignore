@@ -1,0 +1,53 @@
+# ---------------------------
+# General
+# ---------------------------
+.DS_Store
+Thumbs.db
+.env
+.env.*.local
+*.log
+
+# ---------------------------
+# Laravel / PHP (backend)
+# ---------------------------
+/backend/vendor/
+/backend/node_modules/
+/backend/storage/*.key
+/backend/storage/framework/cache/data/
+/backend/storage/logs/
+/backend/storage/framework/views/
+/backend/bootstrap/cache/*.php
+
+# Composer files (optional)
+/backend/composer.lock
+
+# ---------------------------
+# Angular / Node (frontend)
+# ---------------------------
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.angular/cache/
+/frontend/.env
+/frontend/package-lock.json
+/frontend/yarn.lock
+
+# ---------------------------
+# Docker
+# ---------------------------
+/docker/*.env
+docker-compose.override.yml
+.dockerignore
+
+# ---------------------------
+# IDEs / Editors
+# ---------------------------
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# ---------------------------
+# OS
+# ---------------------------
+*.swp
+*.bak

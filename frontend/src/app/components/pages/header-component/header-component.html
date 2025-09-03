@@ -1,0 +1,33 @@
+<div
+  style="width: 100%; height: 40px; justify-content: space-between; align-items: center; display: flex;background-color: #1a1d20; color: white; font-family: Arial;padding-top: 20px">
+  <!-- Menú izquierdo -->
+  <div style="display: flex; justify-content: start; align-items: center">
+    <div *ngFor="let item of getMenu('left')" (click)="item.action?.()"
+         class="hover-bg"
+         style="--hover-bg: #3f3f3f; height: 40px; padding: 0 20px; cursor: pointer">
+      {{ item.name }}
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: end; align-items: center; position: relative;">
+    <div *ngFor="let item of getMenu('right')" class="menu-item-wrapper" style="position: relative;">
+      <div
+        class="hover-bg"
+        style="--hover-bg: #3f3f3f; height: 40px; padding: 0 20px; cursor: pointer;"
+        (click)="item.action?.()"
+        [ngClass]="{'has-children': item.children && item.children.length > 0}">
+        {{ item.name }}
+      </div>
+
+      <div *ngIf="item.children && item.children.length > 0" class="submenu">
+        <div *ngFor="let sub of item.children" (click)="sub.action?.()" class="submenu-item">
+          {{ sub.name }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+

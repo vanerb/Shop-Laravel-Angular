@@ -1,0 +1,28 @@
+
+
+
+.menu-item-wrapper:hover .submenu {
+  display: block;
+}
+
+.submenu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background-color: red;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 10;
+  min-width: 160px;
+  border-radius: 4px;
+}
+
+.submenu-item {
+  padding: 10px 20px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.submenu-item:hover {
+  background-color:red;
+}
