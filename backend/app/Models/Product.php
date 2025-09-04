@@ -41,7 +41,7 @@ class Product extends Model
           public function baskets()
              {
                  return $this->belongsToMany(Basket::class, 'basket_product')
-                             ->withPivot('cantidad')
+                             ->withPivot('quantity')
                              ->withTimestamps();
              }
 }

@@ -1,3 +1,5 @@
+import {Category} from './categories';
+
 export interface Product {
   id: number;
   name: string;
@@ -7,7 +9,9 @@ export interface Product {
   category_id: number;
   created_at: string;
   updated_at: string;
-  images: Images[]
+  images: Images[],
+  category: Category,
+  "pivot": Pivot
 }
 
 export interface Images{
@@ -18,4 +22,12 @@ export interface Images{
     "imageable_type":string,
     "created_at": string,
     "updated_at": string
+}
+
+export interface Pivot{
+  "basket_id": number,
+  "product_id": number,
+  "quantity": number,
+  "created_at": string,
+  "updated_at": string
 }

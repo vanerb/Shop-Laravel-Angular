@@ -13,14 +13,13 @@
       </thead>
 
       <tbody style="width: 100%; text-align: center">
-      <tr>
-        <td>1</td>
-      </tr>
-      <tr>
-        <td>2</td>
-      </tr>
-      <tr>
-        <td>3</td>
+      <tr style="height: 40px" *ngFor="let order of orders">
+        <td>{{ order.name }}</td>
+        <td>{{ order.email }}</td>
+        <td>{{ order.direction }}</td>
+        <td>{{ order.city }}</td>
+        <td>{{ order.zip }}</td>
+        <td>{{ order.status }}</td>
       </tr>
       </tbody>
     </table>

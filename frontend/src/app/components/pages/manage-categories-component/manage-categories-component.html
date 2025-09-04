@@ -1,1 +1,41 @@
-<p>manage-categories-component works!</p>
+<app-container-component>
+  <div style="width: 100%; height: 100%;color: white">
+    <table style="width: 100%">
+      <thead style="width: 100%">
+      <tr style="width: 100%; ">
+        <th>Nombre</th>
+        <th>Descripcion</th>
+        <th>Fecha Creación</th>
+        <th>Fecha Edición</th>
+        <th>Acciones</th>
+      </tr>
+      </thead>
+
+      <tbody style="width: 100%; text-align: center">
+      <tr *ngFor="let product of categories">
+        <td>
+          <span>{{ product.name }}</span>
+        </td>
+
+        <td>
+          <span>{{ product.description }}</span>
+        </td>
+        <td>
+          <span>{{ this.getDates( product.created_at) }}</span>
+        </td>
+        <td>
+          <span>{{ this.getDates(product.updated_at) }}</span>
+        </td>
+
+        <td>
+          <div style="display: flex; justify-content: center; align-items: center">
+            <button style="border-radius: 10px; border: 1px #0f5132 solid; background-color: #0f5132; width: 100%; height: 40px; margin-right: 10px; color: white; cursor: pointer">Editar</button>
+            <button style="border-radius: 10px; border: 1px red solid; background-color: red; width: 100%; height: 40px; color: white; cursor: pointer" >Borrar</button>
+          </div>
+        </td>
+      </tr>
+
+      </tbody>
+    </table>
+  </div>
+</app-container-component>

@@ -17,6 +17,7 @@ class Basket extends Model
         {
             return $this->belongsToMany(Product::class, 'basket_product')
                         ->withPivot('quantity')
-                        ->withTimestamps();
+                        ->withTimestamps()
+                        ->with(['category', 'images']);;
         }
 }
