@@ -2,9 +2,8 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-container-component',
-  imports: [],
+  standalone: false,
   templateUrl: './container-component.html',
-  standalone: true,
   styleUrl: './container-component.css'
 })
 export class ContainerComponent {

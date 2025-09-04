@@ -1,13 +1,16 @@
 import { Component } from '@angular/core';
-import {ContainerComponent} from '../general/container-component/container-component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-admin-main-component',
-  imports: [ContainerComponent],
+  standalone: false,
   templateUrl: './admin-main-component.html',
-  standalone: true,
   styleUrl: './admin-main-component.css'
 })
 export class AdminMainComponent {
-
+  constructor(private  readonly router: Router,) {
+  }
+  async goToUrl(url: string) {
+    await this.router.navigate([url])
+  }
 }

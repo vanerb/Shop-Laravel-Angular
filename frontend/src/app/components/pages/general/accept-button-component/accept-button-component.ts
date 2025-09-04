@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-accept-button-component',
-  imports: [],
+  standalone: false,
   templateUrl: './accept-button-component.html',
   styleUrl: './accept-button-component.css'
 })

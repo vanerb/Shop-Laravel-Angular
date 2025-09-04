@@ -8,7 +8,7 @@ describe('CancelButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CancelButtonComponent]
+      declarations: [CancelButtonComponent]
     })
     .compileComponents();
 

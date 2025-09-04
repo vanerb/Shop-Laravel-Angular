@@ -1,23 +1,17 @@
-import {Component, SimpleChanges} from '@angular/core';
+import {Component, OnInit, SimpleChanges} from '@angular/core';
 import {UtilitiesService} from '../../../services/utilities-service';
 import {UsersService} from '../../../services/users-service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../../../services/auth-service';
 import {Header} from '../../../interfaces/header';
-import {NgClass, NgForOf, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-header-component',
-  imports: [
-    NgForOf,
-    NgClass,
-    NgIf
-  ],
+  standalone: false,
   templateUrl: './header-component.html',
-  standalone: true,
   styleUrl: './header-component.css'
 })
-export class HeaderComponent {
+export class HeaderComponent  implements OnInit{
   menu: Header[] = []
   selected: string = ""
 
@@ -30,9 +24,6 @@ export class HeaderComponent {
   ) {
 
   }
-
-
-
 
   async ngOnInit() {
     if (this.authService.isLoggedIn()) {
@@ -55,7 +46,15 @@ export class HeaderComponent {
             await this.selectionMenu();
           }
         },
-
+        {
+          key: "contact",
+          name: "Contacto",
+          position: "left",
+          action: async () => {
+            await this.router.navigate(['/contact']);
+            await this.selectionMenu();
+          }
+        },
         {
           key: "basket",
           name: "Cesta",
@@ -70,7 +69,7 @@ export class HeaderComponent {
           name: "Mi perfil",
           position: "right",
           action: async () => {
-            await this.router.navigate(['/my-panel']);
+            await this.router.navigate(['/profile']);
             await this.selectionMenu();
           },
           children: [
@@ -79,7 +78,7 @@ export class HeaderComponent {
               name: "Mi perfil",
               position: "right",
               action: async () => {
-                await this.router.navigate(['/my-panel/']);
+                await this.router.navigate(['/profile/']);
                 await this.selectionMenu();
               }
             },

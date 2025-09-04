@@ -8,7 +8,7 @@ describe('ManageCategoriesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ManageCategoriesComponent]
+      declarations: [ManageCategoriesComponent]
     })
     .compileComponents();
 

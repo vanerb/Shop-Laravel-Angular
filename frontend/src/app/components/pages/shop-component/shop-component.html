@@ -1,14 +1,11 @@
 <app-container-component>
 
-  <div style=" display: grid;  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;max-width: 1800px;   margin: 0 auto;  ">
-    <app-product-card-component></app-product-card-component>
-    <app-product-card-component></app-product-card-component>
-    <app-product-card-component></app-product-card-component>
-    <app-product-card-component></app-product-card-component>
-    <app-product-card-component></app-product-card-component>
-    <app-product-card-component></app-product-card-component>
-    <app-product-card-component></app-product-card-component>
-    <app-product-card-component></app-product-card-component>
-  </div>
+  <div style=" display: grid;  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;max-width: 1800px;   margin: 0 auto;  " *ngIf="products.length > 0; else loading">
 
+    <app-product-card-component  *ngFor="let product of products" [item]="product" ></app-product-card-component>
+
+  </div>
+  <ng-template #loading>
+    Cargando productos...
+  </ng-template>
 </app-container-component>

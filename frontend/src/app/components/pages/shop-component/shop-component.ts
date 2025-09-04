@@ -1,14 +1,30 @@
-import { Component } from '@angular/core';
-import {ContainerComponent} from '../general/container-component/container-component';
-import {ProductCardComponent} from '../general/product-card-component/product-card-component';
+import {Component, OnInit, ChangeDetectorRef, PLATFORM_ID, Inject} from '@angular/core';
+import {Product} from '../../../interfaces/products';
+import {ProductsService} from '../../../services/products-service';
+
 
 @Component({
   selector: 'app-shop-component',
-  imports: [ContainerComponent,ProductCardComponent],
+  standalone: false,
   templateUrl: './shop-component.html',
-  standalone: true,
   styleUrl: './shop-component.css'
 })
-export class ShopComponent {
+export class ShopComponent implements OnInit {
+  products: Product[] = []
+
+  constructor(private productsService: ProductsService, private cd: ChangeDetectorRef) {}
+
+   ngOnInit() {
+      this.productsService.getAllProductsByUser().subscribe({
+        next: (products: Product[]) => {
+          this.products = products; // forzar nueva referencia
+          console.log("PRODUCTOS RECIBIDOS", this.products);
+          this.cd.detectChanges();
+        },
+        error: err => console.error("Error al cargar productos", err)
+      });
+  }
+
+
 
 }

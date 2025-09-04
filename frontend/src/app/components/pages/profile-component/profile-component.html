@@ -1,1 +1,53 @@
-<p>profile-component works!</p>
+<app-container-component>
+  <div>
+    <form [formGroup]="form"
+          style="width: 100%; height: 100%;">
+
+      <div style="height: 100%; width: 100%; ">
+        <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px; color: white">
+          <span>Editar información personal</span>
+        </div>
+        <div style="display: flex; flex-direction: column">
+          <label style="color: white" class="text-primary" for="name">Nombre</label>
+          <input formControlName="name"
+                 style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
+                 type="text" id="name" placeholder="Introduzca un nombre válido">
+        </div>
+
+
+        <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: white">
+          <span>Editar contraseña</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; margin-top: 20px">
+          <label style="color: white" class="text-primary" for="password">Contraseña</label>
+          <input formControlName="password"
+                 style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
+                 type="password" id="password" placeholder="Introduzca una contraseña válida">
+        </div>
+        <div style="display: flex; flex-direction: column; margin-top: 20px">
+          <label style="color: white" class="text-primary" for="repeat_password">Repetir Contraseña</label>
+          <input formControlName="password_confirmation"
+                 style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
+                 type="password" id="repeat_password" placeholder="Repita la contraseña">
+        </div>
+
+      </div>
+      <div style="width: 100%; margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+
+        <div style="width: 100%; display: flex; justify-content: end; align-items: center">
+          <button (click)="updateProfile()"
+                  style="width: 100%; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer; height: 40px;">
+            Actualizar información
+          </button>
+        </div>
+
+      </div>
+
+    </form>
+
+
+    <button (click)="logout()" style="cursor: pointer;width: 100%; background-color: red; color: var(--text-inverted); border-radius: 10px; margin-top: 20px; border: 1px red solid; height: 40px; padding: 8px 16px; color: white">Cerrar sesión</button>
+  </div>
+
+</app-container-component>

@@ -1,1 +1,5 @@
-<p>modal-component works!</p>
+<div class="modal-backdrop" *ngIf="this.show" >
+  <div class="modal" [ngStyle]="this.styles" (click)="$event.stopPropagation()">
+    <ng-template #modalContent></ng-template>
+  </div>
+</div>

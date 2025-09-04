@@ -8,7 +8,7 @@ describe('AcceptButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AcceptButtonComponent]
+      declarations: [AcceptButtonComponent]
     })
     .compileComponents();
 

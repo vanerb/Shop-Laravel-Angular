@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-cancel-button-component',
-  imports: [],
+  standalone: false,
   templateUrl: './cancel-button-component.html',
   styleUrl: './cancel-button-component.css'
 })
