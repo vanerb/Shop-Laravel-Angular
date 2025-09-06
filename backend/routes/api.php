@@ -18,6 +18,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('productsByUser', [ProductController::class, 'allByUser']);
     Route::apiResource('products', ProductController::class);
 });
 
@@ -28,6 +29,8 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
    Route::apiResource('payments', PaymentController::class);
 });
+
+ Route::get('products', [ProductController::class, 'all']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('basket', [BasketController::class, 'index']);

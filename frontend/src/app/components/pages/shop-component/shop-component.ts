@@ -15,7 +15,7 @@ export class ShopComponent implements OnInit {
   constructor(private productsService: ProductsService, private cd: ChangeDetectorRef) {}
 
    ngOnInit() {
-      this.productsService.getAllProductsByUser().subscribe({
+      this.productsService.getAllProducts().subscribe({
         next: (products: Product[]) => {
           this.products = products; // forzar nueva referencia
           console.log("PRODUCTOS RECIBIDOS", this.products);

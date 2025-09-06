@@ -36,9 +36,18 @@
         </div>
 
         <div style="width: 10%; display: flex; justify-content: center; align-items: center">
-          <span>{{ product.price }} €</span>
+          <span>{{ product.pivot.quantity }}x </span>
+          <span> {{ product.price }} €</span>
+        </div>
+
+        <div style="width: 10%; display: flex; justify-content: center; align-items: center">
+         <button style="width: 100%; height: 40px; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer" (click)="removeProductBasket(product)">Eliminar</button>
         </div>
       </div>
+    </div>
+
+    <div style="margin-top: 20px; color: white">
+      <span>Subtotal: {{ calculateTotal() }} €</span>
     </div>
   </div>
 

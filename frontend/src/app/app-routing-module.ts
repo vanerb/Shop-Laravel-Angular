@@ -13,22 +13,24 @@ import {ManageCategoriesComponent} from './components/pages/manage-categories-co
 import {ManageUsersComponent} from './components/pages/manage-users-component/manage-users-component';
 import {ManageOrdersComponent} from './components/pages/manage-orders-component/manage-orders-component';
 import {OrdersComponent} from './components/pages/orders-component/orders-component';
+import {AuthGuard} from './guards/auth-guard';
+import {ProcessOrderComponent} from './components/pages/process-order-component/process-order-component';
 
 const routes: Routes = [
   {path: '', component: IndexComponent},
   {path: 'login', component: LoginComponent},
-  {path: 'shop', component: ShopComponent},
-  {path: 'basket', component: BasketComponent},
+  {path: 'shop', component: ShopComponent, canActivate: [AuthGuard]},
+  {path: 'basket', component: BasketComponent, canActivate: [AuthGuard]},
   {path: 'register', component: RegisterComponent},
-  {path: 'admin-products', component: ManageProductsComponent},
-  {path: 'admin-categories', component: ManageCategoriesComponent},
-  {path: 'admin-users', component: ManageUsersComponent},
-  {path: 'admin-orders', component: ManageOrdersComponent},
-  {path: 'my-orders', component: OrdersComponent},
-  {path: 'process-order', component: OrdersComponent},
-  {path: 'administration', component: AdminMainComponent},
-  {path: 'profile', component: ProfileComponent},
-  {path: 'contact', component: ContactComponent},
+  {path: 'admin-products', component: ManageProductsComponent, canActivate: [AuthGuard]},
+  {path: 'admin-categories', component: ManageCategoriesComponent, canActivate: [AuthGuard]},
+  {path: 'admin-users', component: ManageUsersComponent, canActivate: [AuthGuard]},
+  {path: 'admin-orders', component: ManageOrdersComponent, canActivate: [AuthGuard]},
+  {path: 'my-orders', component: OrdersComponent, canActivate: [AuthGuard]},
+  {path: 'process-order', component: ProcessOrderComponent, canActivate: [AuthGuard]},
+  {path: 'administration', component: AdminMainComponent, canActivate: [AuthGuard]},
+  {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
+  {path: 'contact', component: ContactComponent, canActivate: [AuthGuard]},
   {path: '**', redirectTo: ''}
 ];
 

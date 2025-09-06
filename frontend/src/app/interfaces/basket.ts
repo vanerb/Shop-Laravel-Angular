@@ -8,3 +8,8 @@ export interface Basket {
   "updated_at": string,
   "products": Product[]
 }
+
+export interface AddProductBasket{
+  "product_id": number,
+  "quantity": number
+}

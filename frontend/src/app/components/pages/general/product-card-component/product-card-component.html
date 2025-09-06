@@ -13,10 +13,10 @@
   </div>
 
   <div style="text-align: center; width: 100%; flex: 0 0 auto; ">
-    <p>Titulo</p>
+    <p>{{ item?.name }}</p>
   </div>
 
-  <div style="width: 100%; flex: 0 0 auto;">
+  <div style="width: 100%; flex: 0 0 auto; display: flex; align-items: center; justify-content: center">
     <p style="
 
       display: -webkit-box;
@@ -29,12 +29,29 @@
   word-break: break-word;       /* rompe palabras largas */
   overflow-wrap: break-word;    /* soporte adicional */
     ">
-      DescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcionDescripcion
+      {{ item?.description}}
+    </p>
+  </div>
+
+  <div style="width: 100%; flex: 0 0 auto; display: flex; align-items: center; justify-content: center">
+    <p style="
+
+      display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2em;
+  max-height: calc(1.2em * 3);
+  word-break: break-word;       /* rompe palabras largas */
+  overflow-wrap: break-word;    /* soporte adicional */
+    ">
+      {{ item?.price}} €
     </p>
   </div>
 
 
   <div>
-    <button style="width: 100%; height: 40px; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer">Agregar al carrito</button>
+    <button (click)="addProductBasket(item)" style="width: 100%; height: 40px; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer">Agregar al carrito</button>
   </div>
 </div>

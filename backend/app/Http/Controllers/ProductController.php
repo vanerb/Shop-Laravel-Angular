@@ -11,8 +11,12 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    public function index() {
-        return Product::with(['images', 'category'])->get();
+     public function all() {
+            return Product::with(['images', 'category'])->get();
+        }
+
+    public function allByUser() {
+        return Auth::user()->products()->with(['images', 'category'])->get();
     }
 
 public function store(Request $request) {

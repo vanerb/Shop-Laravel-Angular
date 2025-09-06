@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Category} from '../interfaces/categories';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {AuthService} from './auth-service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,11 +9,11 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 export class CategoriesService {
   baseUrl: string = 'http://localhost:8000/api/';
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private readonly authService: AuthService) {
   }
 
   getAllCategoriesByUser(){
-    let headers = new HttpHeaders().set('Authorization', `Bearer 1|628ue3F5Gxu0WntzgITjBElAPxjCkyUmTPPYacYic25b8ef6`);
+    let headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
     return  this.http.get<Category[]>(this.baseUrl + 'categories', { headers });
   }
 }

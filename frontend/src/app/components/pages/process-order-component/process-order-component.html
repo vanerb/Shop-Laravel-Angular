@@ -1,1 +1,52 @@
-<p>process-order-component works!</p>
+<app-container-component>
+  <div>
+    <form>
+      <div style="display: flex; flex-direction: column;">
+        <label style="color: white" class="text-primary" for="name">Nombre</label>
+        <input formControlName="name"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
+               type="text" id="name" placeholder="Introduzca un nombre válido">
+      </div>
+
+      <div style="display: flex; flex-direction: column;margin-top: 20px">
+        <label style="color: white" class="text-primary" for="email">Email</label>
+        <input formControlName="email"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
+               type="text" id="email" placeholder="Introduzca un nombre válido">
+      </div>
+
+      <div style="display: flex; flex-direction: column;margin-top: 20px">
+        <label style="color: white" class="text-primary" for="direction">Dirección</label>
+        <input formControlName="direction"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
+               type="text" id="direction" placeholder="Introduzca un nombre válido">
+      </div>
+
+      <div style="display: flex; flex-direction: column;margin-top: 20px">
+        <label style="color: white" class="text-primary" for="zip">Codigo postal</label>
+        <input formControlName="zip"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
+               type="text" id="zip" placeholder="Introduzca un nombre válido">
+      </div>
+
+      <div style="display: flex; flex-direction: column; margin-top: 20px">
+        <label style="color: white" class="text-primary" for="city">Dirección</label>
+        <input formControlName="city"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
+               type="text" id="city" placeholder="Introduzca un nombre válido">
+      </div>
+
+      <div style="display: flex; flex-direction: column; margin-top: 20px">
+        <label style="color: white" class="text-primary" for="country">Pais</label>
+        <input formControlName="country"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
+               type="text" id="country" placeholder="Introduzca un nombre válido">
+      </div>
+
+
+    </form>
+    <div style="margin-top: 20px">
+      <button (click)="createPayment()" style="width: 100%; height: 40px; background-color: #0f5132; border-radius: 10px; border: 1px #0f5132 solid; margin-top: 20px; color: white; cursor: pointer">Completar compra</button>
+    </div>
+  </div>
+</app-container-component>

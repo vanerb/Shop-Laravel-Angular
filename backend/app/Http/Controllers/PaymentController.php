@@ -13,42 +13,45 @@ class PaymentController extends Controller
             }
 
         public function store(Request $request) {
-     $request->validate([
-                'basket_id' => 'required|exists:baskets,id',
-                 'total' => 'required|string|max:255',
-                  'status' => 'required|string|max:255',
-                   'name' => 'required|string|max:255',
-                    'email' => 'required|string|max:255',
-                     'direction' => 'required|string|max:255',
-                     'city' => 'required|string|max:255',
-                      'zip' => 'required|string|max:255',
-                       'country' => 'required|string|max:255',
-            ]);
+   $request->validate([
+          'basket_id' => 'required|exists:baskets,id',
+          'total' => 'required|string|max:255',
+          'status' => 'required|string|max:255',
+          'name' => 'required|string|max:255',
+          'email' => 'required|string|max:255',
+          'direction' => 'required|string|max:255',
+          'city' => 'required|string|max:255',
+          'zip' => 'required|string|max:255',
+          'country' => 'required|string|max:255',
+      ]);
 
-            $payment = Auth::user()->payments()->where('basket_id', $request->basket_id)->first();
-            if(!is_null($payment)){
-                return response()->json(['message' => 'Ya existe'], 500);
-            }
+      $payment = Auth::user()->payments()->where('basket_id', $request->basket_id)->first();
+      if (!is_null($payment)) {
+          return response()->json(['message' => 'Ya existe'], 201);
+      }
 
+    $basket = Auth::user()->basket()->where('id', $request->basket_id)->firstOrFail();
 
+    $basket->finished = 1;
+    $basket->save();
 
-            $payments = Auth::user()->payments()->create([
-                'basket_id' => $request->basket_id,
-                 'total' => $request->total,
-                 'status' => $request->status,
-                 'name' => $request->name,
-                 'email' => $request->email,
-                 'direction' => $request->direction,
-                  'city' => $request->city,
-                 'zip' => $request->zip,
-                 'country' => $request->country,
-            ]);
+      $payment = Auth::user()->payments()->create([
+          'basket_id' => $request->basket_id,
+          'total' => $request->total,
+          'status' => $request->status,
+          'name' => $request->name,
+          'email' => $request->email,
+          'direction' => $request->direction,
+          'city' => $request->city,
+          'zip' => $request->zip,
+          'country' => $request->country,
+      ]);
 
-            return response()->json($payments, 201);
+      return response()->json($payment, 201);
         }
 
         public function show($id) {
-       $category = Auth::user()->payments()->where('id', $id)->firstOrFail();
+       $category = Auth::user()->payment()->where('id', $id)->firstOrFail();
 
         return response()->json($category);
         }
@@ -85,10 +88,10 @@ class PaymentController extends Controller
 
 
         public function destroy($id) {
-     $payments = Auth::user()->payments()->where('id', $id)->firstOrFail();
+     $payment = Auth::user()->payments()->where('id', $id)->firstOrFail();
 
         // Eliminar
-        $payments->delete();
+        $payment->delete();
 
         return response()->json(['message' => 'Categoría eliminada correctamente'], 200);
         }
