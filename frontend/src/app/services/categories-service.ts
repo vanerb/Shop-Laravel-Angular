@@ -16,4 +16,20 @@ export class CategoriesService {
     let headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
     return  this.http.get<Category[]>(this.baseUrl + 'categories', { headers });
   }
+
+  create(category: FormData){
+    let headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
+    return  this.http.post(this.baseUrl + 'categories', category, { headers });
+  }
+
+  update(id: number,category: FormData){
+    category.append('_method', 'PATCH');
+    let headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
+    return  this.http.post(this.baseUrl + 'categories/'+id, category, { headers });
+  }
+
+  delete(id: number){
+    let headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
+    return  this.http.delete(this.baseUrl + 'categories/'+id, { headers });
+  }
 }

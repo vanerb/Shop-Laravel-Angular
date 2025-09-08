@@ -29,6 +29,15 @@ import { RegisterComponent } from './components/pages/register-component/registe
 import { ShopComponent } from './components/pages/shop-component/shop-component';
 import { HttpClientModule } from '@angular/common/http';
 import {ReactiveFormsModule} from '@angular/forms';
+import {
+  AddProductModalComponent
+} from './components/pages/manage-products-component/add-product-modal-component/add-product-modal-component';
+import {
+  EditProductModalComponent
+} from './components/pages/manage-products-component/edit-product-modal-component/edit-product-modal-component';
+import { AddCategoryModalComponent } from './components/pages/manage-categories-component/add-category-modal-component/add-category-modal-component';
+import { EditCategoryModalComponent } from './components/pages/manage-categories-component/edit-category-modal-component/edit-category-modal-component';
+import { ConfirmationModalComponent } from './components/pages/general/confirmation-modal-component/confirmation-modal-component';
 
 @NgModule({
   declarations: [
@@ -56,7 +65,12 @@ import {ReactiveFormsModule} from '@angular/forms';
     ProcessOrderComponent,
     ProfileComponent,
     RegisterComponent,
-    ShopComponent
+    ShopComponent,
+    AddProductModalComponent,
+    EditProductModalComponent,
+    AddCategoryModalComponent,
+    EditCategoryModalComponent,
+    ConfirmationModalComponent
   ],
   imports: [
     BrowserModule,

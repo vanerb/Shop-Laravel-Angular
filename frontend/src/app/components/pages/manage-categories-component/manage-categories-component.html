@@ -7,30 +7,30 @@
         <th>Descripcion</th>
         <th>Fecha Creación</th>
         <th>Fecha Edición</th>
-        <th>  <button style="border-radius: 10px; border: 1px #0f5132 solid; background-color: #0f5132; width: 100%; height: 40px; margin-right: 10px; color: white; cursor: pointer">Añadir</button></th>
+        <th>  <button (click)="add()" style="border-radius: 10px; border: 1px #0f5132 solid; background-color: #0f5132; width: 100%; height: 40px; margin-right: 10px; color: white; cursor: pointer">Añadir</button></th>
       </tr>
       </thead>
 
       <tbody style="width: 100%; text-align: center">
-      <tr *ngFor="let product of categories">
+      <tr *ngFor="let category of categories">
         <td>
-          <span>{{ product.name }}</span>
+          <span>{{ category.name }}</span>
         </td>
 
         <td>
-          <span>{{ product.description }}</span>
+          <span>{{ category.description }}</span>
         </td>
         <td>
-          <span>{{ this.getDates( product.created_at) }}</span>
+          <span>{{ this.getDates( category.created_at) }}</span>
         </td>
         <td>
-          <span>{{ this.getDates(product.updated_at) }}</span>
+          <span>{{ this.getDates(category.updated_at) }}</span>
         </td>
 
         <td>
           <div style="display: flex; justify-content: center; align-items: center">
-            <button style="border-radius: 10px; border: 1px #0f5132 solid; background-color: #0f5132; width: 100%; height: 40px; margin-right: 10px; color: white; cursor: pointer">Editar</button>
-            <button style="border-radius: 10px; border: 1px red solid; background-color: red; width: 100%; height: 40px; color: white; cursor: pointer" >Borrar</button>
+            <button (click)="update(category)" style="border-radius: 10px; border: 1px #0f5132 solid; background-color: #0f5132; width: 100%; height: 40px; margin-right: 10px; color: white; cursor: pointer">Editar</button>
+            <button (click)="delete(category)" style="border-radius: 10px; border: 1px red solid; background-color: red; width: 100%; height: 40px; color: white; cursor: pointer" >Borrar</button>
           </div>
         </td>
       </tr>

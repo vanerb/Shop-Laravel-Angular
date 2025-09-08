@@ -1,0 +1,13 @@
+<div style="width: 100%; height: 100%">
+  <div style="">
+    <h1>{{ title }}</h1>
+  </div>
+
+  <div>
+    <p>{{ message }}</p>
+  </div>
+  <div style="display: flex; justify-content: end; align-items: end; margin-top: 20px">
+    <button (click)="close()" style="border-radius: 10px; border: 1px #0f5132 solid; padding-right: 16px; padding-left: 16px; height: 40px; margin-right: 10px; color: black; cursor: pointer">Cancelar</button>
+    <button (click)="confirm()" style="border-radius: 10px; border: 1px #0f5132 solid; background-color: #0f5132; padding-right: 16px; padding-left: 16px; height: 40px; margin-right: 10px; color: white; cursor: pointer">Aceptar</button>
+  </div>
+</div>
