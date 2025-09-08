@@ -95,15 +95,15 @@ export class ManageCategoriesComponent implements OnInit {
 
   delete(category: Category){
     this.modalService.open(ConfirmationModalComponent, {
-        width: '90%',
+           width: '90%',
 
-      },
-      { title: 'Eliminar', message: '¿Está seguro de que quiere eliminar el elemento '+category.name+"?" }).then(async (item: FormData) => {
-      this.categoriesService.delete(category.id).subscribe({
-        next: async () => {
-          this.categoriesService.getAllCategoriesByUser().subscribe({
-            next: (categories: Category[]) => {
-              this.categories = [...categories]; // forzar nueva referencia
+            },
+          { title: 'Eliminar', message: '¿Está seguro de que quiere eliminar el elemento '+category.name+"?" }).then(async (item: FormData) => {
+            this.categoriesService.delete(category.id).subscribe({
+              next: async () => {
+                this.categoriesService.getAllCategoriesByUser().subscribe({
+                  next: (categories: Category[]) => {
+                    this.categories = [...categories]; // forzar nueva referencia
               this.cd.detectChanges();
             },
             error: (err) => console.error("Error al cargar productos", err)

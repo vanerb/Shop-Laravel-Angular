@@ -1,1 +1,57 @@
-<p>add-product-modal-component works!</p>
+<div style="width: 100%; height: 100%">
+  <div style="">
+    <h1>Añadir producto</h1>
+  </div>
+
+  <div>
+    <form [formGroup]="form">
+      <div style="display: flex; flex-direction: column;">
+        <label class="text-primary" for="name">Nombre</label>
+        <input formControlName="name"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 1px black solid"
+               type="text" id="name" placeholder="Introduzca un nombre válido">
+      </div>
+
+      <div style="display: flex; flex-direction: column; margin-top: 20px">
+        <label class="text-primary" for="description">Descripcion</label>
+        <input formControlName="description"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
+               type="text" id="description" placeholder="Introduzca una descripcion válida">
+      </div>
+
+      <div style="display: flex; flex-direction: column; margin-top: 20px">
+        <label class="text-primary" for="price">Precio</label>
+        <input formControlName="price"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
+               type="text" id="price" placeholder="Introduzca un precio válido">
+      </div>
+
+      <div style="display: flex; flex-direction: column; margin-top: 20px">
+        <label class="text-primary" for="category_id">Categoria</label>
+        <select  style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid" formControlName="category_id" id="category_id">
+          <option *ngFor="let category of categories" value="{{ category.id }}">{{ category.name }}</option>
+        </select>
+
+      </div>
+
+      <div style="display: flex; flex-direction: column; margin-top: 20px">
+        <label class="text-primary" for="cover_image">Imagen cubierta</label>
+        <input formControlName="cover_image" (change)="onCoverImageChange($event)" accept="image/*"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border:0px black solid"
+               type="file" id="cover_image">
+      </div>
+
+      <div style="display: flex; flex-direction: column; margin-top: 20px">
+        <label class="text-primary" for="images">Imagenes</label>
+        <input formControlName="images" (change)="onGalleryImagesChange($event)" accept="image/*"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border:0px black solid"
+               type="file" id="images" multiple>
+      </div>
+
+      <div style="display: flex; justify-content: end; align-items: end; margin-top: 20px">
+        <button (click)="close()" style="border-radius: 10px; border: 1px #0f5132 solid; padding-right: 16px; padding-left: 16px; height: 40px; margin-right: 10px; color: black; cursor: pointer">Cancelar</button>
+        <button (click)="create()" style="border-radius: 10px; border: 1px #0f5132 solid; background-color: #0f5132; padding-right: 16px; padding-left: 16px; height: 40px; margin-right: 10px; color: white; cursor: pointer">Crear</button>
+      </div>
+    </form>
+  </div>
+</div>

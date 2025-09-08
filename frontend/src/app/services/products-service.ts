@@ -22,4 +22,20 @@ export class ProductsService {
   getAllProducts() {
     return  this.http.get<Product[]>(this.baseUrl + 'products');
   }
+
+  create(product: FormData){
+    let headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
+    return  this.http.post(this.baseUrl + 'products', product, { headers });
+  }
+
+  delete(id: number){
+    let headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
+    return  this.http.delete(this.baseUrl + 'products/'+id, { headers });
+  }
+
+  update(id: number, product: FormData){
+    product.append('_method', 'PATCH');
+    let headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
+    return  this.http.post(this.baseUrl + 'products/'+id, product, { headers });
+  }
 }
