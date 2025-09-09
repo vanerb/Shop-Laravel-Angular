@@ -14,6 +14,7 @@ import {Header} from '../../../interfaces/header';
 export class HeaderComponent  implements OnInit{
   menu: Header[] = []
   selected: string = ""
+  type: string | false | null = null;
 
   constructor(
     private readonly authService: AuthService,
@@ -114,6 +115,14 @@ export class HeaderComponent  implements OnInit{
           ]
         }
       ];
+
+
+
+
+
+      this.type = this.authService.getType()
+
+
     }
 
     await this.selectionMenu()

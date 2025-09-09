@@ -10,6 +10,7 @@ import {ModalService} from '../../../services/modal-service';
 import {AddProductModalComponent} from './add-product-modal-component/add-product-modal-component';
 import {ConfirmationModalComponent} from '../general/confirmation-modal-component/confirmation-modal-component';
 import {EditProductModalComponent} from './edit-product-modal-component/edit-product-modal-component';
+import {AuthService} from '../../../services/auth-service';
 
 @Component({
   selector: 'app-manage-products-component',
@@ -19,18 +20,36 @@ import {EditProductModalComponent} from './edit-product-modal-component/edit-pro
 })
 export class ManageProductsComponent implements OnInit {
   products: Product[] = []
-  constructor(private productsService: ProductsService, private cd: ChangeDetectorRef, private readonly utilitiesService: UtilitiesService, private readonly modalService: ModalService,private zone: NgZone,) {
+  type: string | false | null = false;
+  constructor(private productsService: ProductsService, private cd: ChangeDetectorRef, private readonly utilitiesService: UtilitiesService, private readonly modalService: ModalService,private zone: NgZone, private authService: AuthService) {
 
   }
 
   ngOnInit() {
-    this.productsService.getAllProductsByUser().subscribe({
-      next: async (products: Product[]) => {
-        this.products = products
-        this.cd.detectChanges();
-      },
-      error: err => console.error("Error al cargar productos", err)
-    });
+
+    this.type = this.authService.getType()
+
+    if(this.type === 'admin'){
+      this.productsService.getAllProducts().subscribe({
+        next: async (products: Product[]) => {
+          this.products = products
+          this.cd.detectChanges();
+        },
+        error: err => console.error("Error al cargar productos", err)
+      });
+    }
+    else{
+      this.productsService.getAllProductsByUser().subscribe({
+        next: async (products: Product[]) => {
+          this.products = products
+          this.cd.detectChanges();
+        },
+        error: err => console.error("Error al cargar productos", err)
+      });
+    }
+
+
+
   }
 
   getImageUrl(item: Product | undefined): string {

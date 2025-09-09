@@ -28,6 +28,7 @@ class AuthController extends Controller
                       'phone' => $request->phone,
                    'email' => $request->email,
                    'password' => Hash::make($request->password),
+                   'type'=>'user'
                ]);
 
                return response()->json(['user' => $user], 201);
@@ -56,6 +57,7 @@ class AuthController extends Controller
 
                return response()->json([
                    'access_token' => $token,
+                   'type'=> $user->type,
                    'token_type' => 'Bearer',
                ]);
            }

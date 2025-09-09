@@ -12,6 +12,11 @@ export class CategoriesService {
   constructor(private http: HttpClient, private readonly authService: AuthService) {
   }
 
+  getAllCategories(){
+    let headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
+    return  this.http.get<Category[]>(this.baseUrl + 'categories/all', { headers });
+  }
+
   getAllCategoriesByUser(){
     let headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
     return  this.http.get<Category[]>(this.baseUrl + 'categories', { headers });

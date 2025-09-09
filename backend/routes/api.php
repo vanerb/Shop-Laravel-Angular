@@ -22,9 +22,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('products', ProductController::class);
 });
 
+Route::get('categories/all', [CategoryController::class, 'all']);
+
 Route::middleware('auth:sanctum')->group(function () {
       Route::apiResource('categories', CategoryController::class);
 });
+
+Route::get('payments/all', [PaymentController::class, 'all']);
 
 Route::middleware('auth:sanctum')->group(function () {
    Route::apiResource('payments', PaymentController::class);

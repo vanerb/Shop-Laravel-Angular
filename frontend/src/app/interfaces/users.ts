@@ -7,3 +7,18 @@ export interface CreateUser {
   "password": string,
   "password_confirmation": string
 }
+
+export interface User {
+  "id": number,
+  "name": string,
+  "email": string,
+  "email_verified_at": string,
+  "created_at": string,
+  "updated_at": string,
+  "subname": string,
+  "phone": string,
+  "prefix": string,
+  "token": string,
+  "active": number,
+  "type": string
+}

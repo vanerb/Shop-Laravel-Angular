@@ -8,6 +8,8 @@ import {ModalService} from '../../../services/modal-service';
 import {AddCategoryModalComponent} from './add-category-modal-component/add-category-modal-component';
 import {EditCategoryModalComponent} from './edit-category-modal-component/edit-category-modal-component';
 import {ConfirmationModalComponent} from '../general/confirmation-modal-component/confirmation-modal-component';
+import {User} from '../../../interfaces/users';
+import {AuthService} from '../../../services/auth-service';
 
 @Component({
   selector: 'app-manage-categories-component',
@@ -18,16 +20,34 @@ import {ConfirmationModalComponent} from '../general/confirmation-modal-componen
 export class ManageCategoriesComponent implements OnInit {
   categories: Category[] = []
 
-  constructor(private categoriesService: CategoriesService, private cd: ChangeDetectorRef, private readonly utilitiesService: UtilitiesService, private modalService: ModalService) {}
+  type: string | null | false = null;
+
+  constructor(private categoriesService: CategoriesService, private cd: ChangeDetectorRef, private readonly utilitiesService: UtilitiesService, private modalService: ModalService, private authService: AuthService) {}
 
   ngOnInit() {
-    this.categoriesService.getAllCategoriesByUser().subscribe({
-      next: (categories: Category[]) => {
-        this.categories = [...categories]; // forzar nueva referencia
-        this.cd.detectChanges();
-      },
-      error: (err) => console.error("Error al cargar productos", err)
-    });
+
+    this.type = this.authService.getType()
+
+    if(this.type === 'admin'){
+      this.categoriesService.getAllCategories().subscribe({
+        next: (categories: Category[]) => {
+          this.categories = [...categories]; // forzar nueva referencia
+          this.cd.detectChanges();
+        },
+        error: (err) => console.error("Error al cargar productos", err)
+      });
+    }
+    else{
+      this.categoriesService.getAllCategoriesByUser().subscribe({
+        next: (categories: Category[]) => {
+          this.categories = [...categories]; // forzar nueva referencia
+          this.cd.detectChanges();
+        },
+        error: (err) => console.error("Error al cargar productos", err)
+      });
+    }
+
+
   }
 
 

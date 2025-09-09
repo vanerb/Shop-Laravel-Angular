@@ -8,9 +8,16 @@ use App\Models\Payment;
 
 class PaymentController extends Controller
 {
+
+
+
     public function index() {
                 return Auth::user()->payments()->get();
             }
+
+         public function all() {
+                            return Payment::all();
+                        }
 
         public function store(Request $request) {
    $request->validate([

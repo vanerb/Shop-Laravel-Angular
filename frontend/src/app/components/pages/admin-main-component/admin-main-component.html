@@ -2,7 +2,7 @@
   <div style=" display: grid;  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;max-width: 1800px;   margin: 0 auto;  ">
 
 
-    <div (click)="goToUrl('/admin-products')" style="background-color: white; cursor: pointer ; border-radius: 10px; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
+    <div (click)="goToUrl('/admin-products')" style="background-color: white; cursor: pointer ; border-radius: 10px; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center" *ngIf="type !== 'user'">
       <div style="width: 100%; height: fit-content; display: flex; justify-content: center; align-items: center; padding: 20px">
         <div style="width: 100%; height: 100%;">
           <div style="width: 100%; flex: 0 0 0; overflow: hidden;">
@@ -21,7 +21,7 @@
     </div>
 
 
-    <div (click)="goToUrl('/admin-categories')" style="background-color: white; cursor: pointer ; border-radius: 10px; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
+    <div (click)="goToUrl('/admin-categories')" style="background-color: white; cursor: pointer ; border-radius: 10px; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center" *ngIf="type !== 'user'">
       <div style="width: 100%; height: fit-content; display: flex; justify-content: center; align-items: center; padding: 20px">
         <div style="width: 100%; height: 100%;">
           <div style="width: 100%; flex: 0 0 0; overflow: hidden;">
@@ -40,7 +40,7 @@
     </div>
 
 
-    <div (click)="goToUrl('/admin-orders')" style="background-color: white; cursor: pointer ; border-radius: 10px; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
+    <div (click)="goToUrl('/admin-orders')" style="background-color: white; cursor: pointer ; border-radius: 10px; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center" *ngIf="type !== 'user'">
       <div style="width: 100%; height: fit-content; display: flex; justify-content: center; align-items: center; padding: 20px">
         <div style="width: 100%; height: 100%;">
           <div style="width: 100%; flex: 0 0 0; overflow: hidden;">
@@ -58,7 +58,7 @@
 
     </div>
 
-    <div (click)="goToUrl('/admin-users')" style="background-color: white; cursor: pointer ; border-radius: 10px; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
+    <div (click)="goToUrl('/admin-users')" style="background-color: white; cursor: pointer ; border-radius: 10px; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center" *ngIf="type !== 'user'">
       <div style="width: 100%; height: fit-content; display: flex; justify-content: center; align-items: center; padding: 20px">
         <div style="width: 100%; height: 100%;">
           <div style="width: 100%; flex: 0 0 0; overflow: hidden;">

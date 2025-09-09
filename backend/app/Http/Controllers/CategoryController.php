@@ -15,6 +15,10 @@ class CategoryController extends Controller
             return Auth::user()->categories()->get();
         }
 
+     public function all() {
+                return Category::all();
+            }
+
     public function store(Request $request) {
  $request->validate([
             'name' => 'required|string|max:255',
