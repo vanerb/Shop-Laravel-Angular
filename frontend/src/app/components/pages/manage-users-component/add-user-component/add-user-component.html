@@ -1,0 +1,72 @@
+<div style="width: 100%; height: 100%">
+  <div style="">
+    <h1>Añadir Usuario</h1>
+  </div>
+
+  <div>
+    <form [formGroup]="form">
+      <div style="display: flex; flex-direction: column;">
+        <label class="text-primary" for="name">Nombre</label>
+        <input formControlName="name"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 1px black solid"
+               type="text" id="name" placeholder="Introduzca un nombre válido">
+      </div>
+
+      <div style="display: flex; flex-direction: column; margin-top: 20px">
+        <label class="text-primary" for="subname">Apellidos</label>
+        <input formControlName="subname"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
+               type="text" id="subname" placeholder="Introduzca una descripcion válida">
+      </div>
+
+      <div style="display: flex; flex-direction: column; margin-top: 20px">
+        <label class="text-primary" for="email">Email</label>
+        <input formControlName="email"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
+               type="text" id="email" placeholder="Introduzca un precio válido">
+      </div>
+
+      <div style="display: flex; flex-direction: column; margin-top: 20px">
+        <div style="display: flex; justify-content: center; align-items: center">
+          <div style="width: 20%">
+            <label class="text-primary" for="prefix">Prefijo</label>
+            <input formControlName="prefix"
+                   style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
+                   type="text" id="prefix" placeholder="Introduzca un precio válido">
+          </div>
+          <div style="width: 80%">
+            <label class="text-primary" for="phone">Telefono</label>
+            <input formControlName="phone"
+                   style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
+                   type="text" id="phone" placeholder="Introduzca un precio válido">
+          </div>
+        </div>
+
+      </div>
+      <div style="display: flex; flex-direction: column; margin-top: 20px">
+        <label class="text-primary" for="password">Contraseña</label>
+        <input formControlName="password"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
+               type="text" id="password" placeholder="Introduzca un precio válido">
+      </div>
+      <div style="display: flex; flex-direction: column; margin-top: 20px">
+        <label class="text-primary" for="type">Tipo</label>
+        <input formControlName="type"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
+               type="text" id="type" placeholder="Introduzca un precio válido">
+      </div>
+
+      <div style="display: flex; flex-direction: column; margin-top: 20px">
+        <label class="text-primary" for="profile_photo">Imagen perfil</label>
+        <input formControlName="profile_photo" (change)="onImageChange($event)" accept="image/*"
+               style="padding: 8px; margin-top: 8px; border-radius: 5px; border:0px black solid"
+               type="file" id="profile_photo">
+      </div>
+
+      <div style="display: flex; justify-content: end; align-items: end; margin-top: 20px">
+        <button (click)="close()" style="border-radius: 10px; border: 1px #0f5132 solid; padding-right: 16px; padding-left: 16px; height: 40px; margin-right: 10px; color: black; cursor: pointer">Cancelar</button>
+        <button (click)="create()" style="border-radius: 10px; border: 1px #0f5132 solid; background-color: #0f5132; padding-right: 16px; padding-left: 16px; height: 40px; margin-right: 10px; color: white; cursor: pointer">Crear</button>
+      </div>
+    </form>
+  </div>
+</div>

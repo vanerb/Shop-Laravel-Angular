@@ -3,6 +3,8 @@ import {Product} from '../../../../interfaces/products';
 import {BasketService} from '../../../../services/basket-service';
 import {Category} from '../../../../interfaces/categories';
 import {AddProductBasket} from '../../../../interfaces/basket';
+import {ModalService} from '../../../../services/modal-service';
+import {DetailComponent} from '../../detail-component/detail-component';
 
 @Component({
   selector: 'app-product-card-component',
@@ -14,7 +16,7 @@ export class ProductCardComponent {
 
   @Input() item?: Product;
 
-  constructor(private  readonly basketService: BasketService, private cd: ChangeDetectorRef) {
+  constructor(private  readonly basketService: BasketService, private cd: ChangeDetectorRef, private modalService: ModalService) {
   }
 
   getImageUrl(item: Product | undefined): string {
@@ -39,6 +41,22 @@ export class ProductCardComponent {
       },
       error: (err) => console.error("Error al cargar productos", err)
     });
+  }
+
+
+  openDetails(item: Product | undefined){
+    this.modalService.open(DetailComponent, {
+      width: '90%',
+    }, {product: item}).then( (product: Product) => {
+
+      this.addProductBasket(product)
+
+
+    })
+      .catch(() => {
+        this.modalService.close()
+      });
+
   }
 
 

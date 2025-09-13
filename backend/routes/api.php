@@ -7,9 +7,15 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BasketController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\UserController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::patch('/users/updateProfile/{id}', [UserController::class, 'updateProfile']);
+
+Route::get('/users/all', [UserController::class, 'all']);
+Route::delete('users/{id}', [UserController::class, 'destroy']);
 
 // Rutas protegidas
 Route::middleware('auth:sanctum')->group(function () {

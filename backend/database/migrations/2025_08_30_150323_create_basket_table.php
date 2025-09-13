@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('baskets', function (Blueprint $table) {
             $table->id();
-                       $table->unsignedBigInteger('user_id'); // a qué usuario pertenece
+                      $table->unsignedBigInteger('user_id');
+                                 $table->foreign('user_id')
+                                        ->references('id')->on('users');
                        $table->boolean('finished')->default(false); // si ya se ha pagado
                        $table->timestamps();
-
-                       $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

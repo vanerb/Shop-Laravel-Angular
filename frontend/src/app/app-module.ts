@@ -38,6 +38,9 @@ import {
 import { AddCategoryModalComponent } from './components/pages/manage-categories-component/add-category-modal-component/add-category-modal-component';
 import { EditCategoryModalComponent } from './components/pages/manage-categories-component/edit-category-modal-component/edit-category-modal-component';
 import { ConfirmationModalComponent } from './components/pages/general/confirmation-modal-component/confirmation-modal-component';
+import { DetailComponent } from './components/pages/detail-component/detail-component';
+import { EditUserComponent } from './components/pages/manage-users-component/edit-user-component/edit-user-component';
+import { AddUserComponent } from './components/pages/manage-users-component/add-user-component/add-user-component';
 
 @NgModule({
   declarations: [
@@ -70,7 +73,10 @@ import { ConfirmationModalComponent } from './components/pages/general/confirmat
     EditProductModalComponent,
     AddCategoryModalComponent,
     EditCategoryModalComponent,
-    ConfirmationModalComponent
+    ConfirmationModalComponent,
+    DetailComponent,
+    EditUserComponent,
+    AddUserComponent
   ],
   imports: [
     BrowserModule,

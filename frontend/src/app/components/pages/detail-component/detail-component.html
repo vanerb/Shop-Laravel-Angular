@@ -1,0 +1,60 @@
+
+<div style="width: 100%; overflow: hidden; padding: ">
+  <div style="display: flex; justify-content: end; align-items: end;">
+    <button style="padding-right:16px ; padding-left: 16px ; height: 40px; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer" (click)="close()">Cerrar</button>
+  </div>
+
+
+  <div style="width: 100%; display: flex; justify-content: start; align-items: start">
+
+    <div style="width: 100%; flex: 0 0 50%; overflow: hidden; ">
+      <img  src="{{ returnImage(getCoverImage()) }}" alt="No Image"
+            style="width: auto; height: 100%; display: block; margin: 0 auto; object-fit: contain; object-position: center;">
+    </div>
+    <div style="width: 50%; padding: 20px">
+      <h1>
+        {{ product.name }}
+      </h1>
+
+      <div style="width: 100%; flex: 0 0 auto; display: flex; align-items: center; justify-content: center">
+        <p style="
+
+      display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2em;
+  max-height: calc(1.2em * 5);
+  word-break: break-word;       /* rompe palabras largas */
+  overflow-wrap: break-word;    /* soporte adicional */
+    ">
+          {{ product.description}}
+        </p>
+      </div>
+
+      <div>
+        <div style="display: flex;flex-wrap: wrap;; justify-content: center; align-items: start">
+          <div style="margin-right: 10px" *ngFor="let img of product?.images; let i = index">
+            <img width="100" height="100" src="{{ returnImage(img) }}">
+            <div style="width: 100%; text-align: center" *ngIf="img?.from === 'cover'">
+              <span style="width: 100%;">Portada</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div style="margin-top: 20px">
+        <button (click)="addProductBasket(product);$event.stopPropagation()" style="width: 100%; height: 40px; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer">Agregar al carrito</button>
+      </div>
+    </div>
+
+
+
+
+  </div>
+</div>
+
+
+

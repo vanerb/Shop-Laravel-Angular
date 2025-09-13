@@ -1,3 +1,5 @@
+import {Images} from './products';
+
 export interface Users {
 }
 
@@ -21,4 +23,5 @@ export interface User {
   "token": string,
   "active": number,
   "type": string
+  "images": Images[]
 }

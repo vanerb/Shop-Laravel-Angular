@@ -3,17 +3,39 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class UserController extends Controller
 {
-    public function updateProfile(Request $request)
+
+     public function all(){
+        return User::with('images')->get();
+    }
+
+public function destroy($id){
+$user = User::where('id', $id)->first();
+
+           foreach ($user->images as $img) {
+               Storage::disk('public')->delete($img->path);
+           }
+
+           $user->delete();
+
+           return response()->json(['message' => 'Usuario eliminado']);
+}
+
+
+    public function updateProfile(Request $request, $id)
     {
-        $user = Auth::user();
+        $user = User::where('id', $id)->firstOrFail();
 
         $request->validate([
             'name'  => 'sometimes|string|max:255',
             'email' => 'sometimes|email|unique:users,email,' . $user->id,
             'profile_photo' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
+                                'subname' => 'sometimes|string',
+                                 'prefix' => 'sometimes|string',
+                                  'phone' => 'sometimes|string',
         ]);
 
         if ($request->has('name')) {
@@ -24,23 +46,37 @@ class UserController extends Controller
             $user->email = $request->email;
         }
 
-        // Manejar foto de perfil polimórfica
-        if ($request->hasFile('profile_photo')) {
-            // Borrar foto anterior si existe
-            $oldImage = $user->profileImage;
-            if ($oldImage) {
-                Storage::disk('public')->delete($oldImage->path);
-                $oldImage->delete();
+ if ($request->has('subname')) {
+            $user->subname = $request->subname;
+        }
+
+     if ($request->has('prefix')) {
+                $user->prefix = $request->prefix;
             }
 
-            // Guardar nueva foto
-            $path = $request->file('profile_photo')->store('profile_photos', 'public');
+        if ($request->has('phone')) {
+                        $user->phone = $request->phone;
+                    }
 
-            $user->images()->create([
-                'path' => $path,
-                'from' => 'profile_image',
-            ]);
-        }
+
+
+        // Manejar foto de perfil polimórfica
+        if ($request->hasFile('profile_photo')) {
+               // Eliminar foto anterior si existe
+               $oldImage = $user->images()->where('from', 'profile_image')->first();
+               if ($oldImage) {
+                   Storage::disk('public')->delete($oldImage->path);
+                   $oldImage->delete();
+               }
+
+               // Guardar nueva foto
+               $path = $request->file('profile_photo')->store('profile_photos', 'public');
+
+               $user->images()->create([
+                   'path' => $path,
+                   'from' => 'profile_image',
+               ]);
+           }
 
         $user->save();
 

@@ -22,6 +22,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'prefix',
+         'phone',
+        'type',
     ];
 
     /**
@@ -74,7 +77,7 @@ public function images()
 
 public function profileImage()
 {
-    return $this->morphOne(Image::class, 'imageable')->where('from', 'profile_image');
+    return $this->morphOne(Image::class, 'imageable')->where('from', 'profile_photo');
 }
 
 }

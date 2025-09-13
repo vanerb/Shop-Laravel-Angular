@@ -1,5 +1,5 @@
-<div style="
-  background: #eee;
+<div (click)="openDetails(item); $event.stopPropagation()" style="
+  background: #eee; cursor: pointer;
   padding: 1rem;
   border-radius: 10px;
   height: 500px;       /* altura fija mayor */
@@ -20,12 +20,12 @@
     <p style="
 
       display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.2em;
-  max-height: calc(1.2em * 3);
+  max-height: calc(1.2em * 1);
   word-break: break-word;       /* rompe palabras largas */
   overflow-wrap: break-word;    /* soporte adicional */
     ">
@@ -52,6 +52,6 @@
 
 
   <div>
-    <button (click)="addProductBasket(item)" style="width: 100%; height: 40px; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer">Agregar al carrito</button>
+    <button (click)="addProductBasket(item);$event.stopPropagation()" style="width: 100%; height: 40px; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer">Agregar al carrito</button>
   </div>
 </div>

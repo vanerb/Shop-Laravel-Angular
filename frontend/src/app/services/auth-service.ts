@@ -67,16 +67,8 @@ export class AuthService {
 
   }
 
-  register(user: CreateUser) {
-    this.http.post<Token>(this.base + '/register', user).subscribe({
-      next: async (token: Token) => {
-        await this.router.navigate(['/']);
-        window.location.reload()
-      },
-      error: (err) => {
-
-      }
-    });
+  register(user: FormData) {
+    return this.http.post<Token>(this.base + '/register', user)
   }
 
   setToken(token: string) {

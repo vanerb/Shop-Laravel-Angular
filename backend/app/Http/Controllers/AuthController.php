@@ -7,31 +7,55 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
      public function register(Request $request)
            {
-               $request->validate([
-                   'name' => 'required|string',
-                    'subname' => 'required|string',
-                     'prefix' => 'required|string',
-                      'phone' => 'required|string',
-                   'email' => 'required|string|email|unique:users',
-                   'password' => 'required|string|min:6',
-               ]);
 
-               $user = User::create([
-                   'name' => $request->name,
-                    'subname' => $request->subname,
-                     'prefix' => $request->prefix,
-                      'phone' => $request->phone,
-                   'email' => $request->email,
-                   'password' => Hash::make($request->password),
-                   'type'=>'user'
-               ]);
 
-               return response()->json(['user' => $user], 201);
+ $request->validate([
+        'name'           => 'required|string|max:255',
+        'subname'        => 'required|string|max:255',
+        'prefix'         => 'required|string|max:5',
+        'phone'          => 'required|string|max:20',
+        'email'          => 'required|string|email|max:255|unique:users',
+        'password'       => 'required|string|min:6',
+        'profile_photo'  => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+         'type'       => 'required|string',
+    ]);
+
+    // Crear usuario
+    $user = User::create([
+        'name'     => $request->name,
+        'subname'  => $request->subname,
+        'prefix'   => $request->prefix,
+        'phone'    => $request->phone,
+        'email'    => $request->email,
+        'password' => Hash::make($request->password),
+        'type'     => $request->type,
+    ]);
+
+    // Subir y asociar foto de perfil
+    if ($request->hasFile('profile_photo')) {
+        // Eliminar foto anterior si existe
+        $oldImage = $user->images()->where('from', 'profile_image')->first();
+        if ($oldImage) {
+            Storage::disk('public')->delete($oldImage->path);
+            $oldImage->delete();
+        }
+
+        // Guardar nueva foto
+        $path = $request->file('profile_photo')->store('profile_photos', 'public');
+
+        $user->images()->create([
+            'path' => $path,
+            'from' => 'profile_image',
+        ]);
+    }
+
+    return response()->json(['user' => $user], 201);
            }
 
            public function login(Request $request)
@@ -64,7 +88,8 @@ class AuthController extends Controller
 
            public function user(Request $request)
            {
-               return response()->json($request->user());
+               $user = Auth::user()->load('images');
+               return response()->json($user);
            }
 
            public function logout(Request $request)
