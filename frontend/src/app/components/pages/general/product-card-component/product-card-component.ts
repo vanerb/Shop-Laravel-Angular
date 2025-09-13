@@ -5,6 +5,7 @@ import {Category} from '../../../../interfaces/categories';
 import {AddProductBasket} from '../../../../interfaces/basket';
 import {ModalService} from '../../../../services/modal-service';
 import {DetailComponent} from '../../detail-component/detail-component';
+import {UtilitiesService} from '../../../../services/utilities-service';
 
 @Component({
   selector: 'app-product-card-component',
@@ -16,14 +17,11 @@ export class ProductCardComponent {
 
   @Input() item?: Product;
 
-  constructor(private  readonly basketService: BasketService, private cd: ChangeDetectorRef, private modalService: ModalService) {
+  constructor(private  readonly basketService: BasketService, private cd: ChangeDetectorRef, private modalService: ModalService,private readonly utilitiesService: UtilitiesService) {
   }
 
   getImageUrl(item: Product | undefined): string {
-    if (!item || !item.images || item.images.length === 0) {
-      return 'http://localhost:8000/storage/general/no_image.jpg'; // Imagen por defecto si no hay
-    }
-    return `http://localhost:8000/storage/${item.images[0].path}`;
+   return this.utilitiesService.getImageUrl(item?.images[0])
   }
 
 

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {Images, Product} from '../../../interfaces/products';
+import {UtilitiesService} from '../../../services/utilities-service';
 
 @Component({
   selector: 'app-detail-component',
@@ -14,20 +15,15 @@ export class DetailComponent {
   confirm!: (result?: any) => void;
   close!: () => void;
 
-  getImageUrl(item: Product | undefined): string {
-    if (!item || !item.images || item.images.length === 0) {
-      return 'http://localhost:8000/storage/general/no_image.jpg'; // Imagen por defecto si no hay
-    }
-    return `http://localhost:8000/storage/${item.images[0].path}`;
+  constructor(private utilitiesService: UtilitiesService,) {
+  }
+
+  getImageUrl(item: Images | undefined): string {
+    return this.utilitiesService.getImageUrl(item)
   }
 
   getCoverImage(){
-    return this.product.images.find(el=>el.from === 'cover')
-  }
-
-  returnImage(image: Images | undefined) {
-    return image ? `http://localhost:8000/image/${image.path.replace(/^images\//, '')}` : 'http://localhost:8000/storage/general/no_image.jpg';
-
+    return this.product.images.filter(el=>el.from === 'cover')[0]
   }
 
   addProductBasket(item: Product | undefined){

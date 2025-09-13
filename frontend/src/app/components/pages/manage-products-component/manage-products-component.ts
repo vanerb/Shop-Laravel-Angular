@@ -53,10 +53,7 @@ export class ManageProductsComponent implements OnInit {
   }
 
   getImageUrl(item: Product | undefined): string {
-    if (!item || !item.images || item.images.length === 0) {
-      return 'http://localhost:8000/storage/general/no_image.jpg';
-    }
-    return `http://localhost:8000/storage/${item.images[0].path}`;
+   return  this.utilitiesService.getImageUrl(item?.images[0])
   }
 
 
