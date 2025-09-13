@@ -19,6 +19,11 @@ export class BasketService {
     return  this.http.get<Basket>(this.baseUrl + 'basket', { headers });
   }
 
+  getBasketById(id: number){
+    let headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
+    return  this.http.get<Basket>(this.baseUrl + 'basket/'+id, { headers });
+  }
+
   getAllOrder(){
     let headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
     return  this.http.get<Order[]>(this.baseUrl + 'payments/all', { headers });

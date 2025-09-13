@@ -1,6 +1,6 @@
 <app-container-component>
   <div>
-    <form>
+    <form [formGroup]="form">
       <div style="display: flex; flex-direction: column;">
         <label style="color: white" class="text-primary" for="name">Nombre</label>
         <input formControlName="name"
@@ -30,7 +30,7 @@
       </div>
 
       <div style="display: flex; flex-direction: column; margin-top: 20px">
-        <label style="color: white" class="text-primary" for="city">Dirección</label>
+        <label style="color: white" class="text-primary" for="city">Ciudad</label>
         <input formControlName="city"
                style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
                type="text" id="city" placeholder="Introduzca un nombre válido">

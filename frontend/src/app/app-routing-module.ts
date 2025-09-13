@@ -27,7 +27,7 @@ const routes: Routes = [
   {path: 'admin-users', component: ManageUsersComponent, canActivate: [AuthGuard]},
   {path: 'admin-orders', component: ManageOrdersComponent, canActivate: [AuthGuard]},
   {path: 'my-orders', component: OrdersComponent, canActivate: [AuthGuard]},
-  {path: 'process-order', component: ProcessOrderComponent, canActivate: [AuthGuard]},
+  {path: 'process-order/:id', component: ProcessOrderComponent, canActivate: [AuthGuard]},
   {path: 'administration', component: AdminMainComponent, canActivate: [AuthGuard]},
   {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
   {path: 'contact', component: ContactComponent, canActivate: [AuthGuard]},

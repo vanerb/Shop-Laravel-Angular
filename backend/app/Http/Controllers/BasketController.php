@@ -22,6 +22,17 @@ class BasketController extends Controller
                return response()->json($basket->load('products'));
         }
 
+
+     public function byId($id)
+            {
+                 $basket = Basket::where('id', $id)
+                        ->where('finished', false)
+                        ->with('products')
+                        ->firstOrFail();
+
+                    return response()->json($basket);
+            }
+
         public function addProduct(Request $request)
         {
            $request->validate([
