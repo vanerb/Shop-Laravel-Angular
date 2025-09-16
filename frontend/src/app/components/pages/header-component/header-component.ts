@@ -1,9 +1,9 @@
 import {Component, OnInit, SimpleChanges} from '@angular/core';
-import {UtilitiesService} from '../../../services/utilities-service';
 import {UsersService} from '../../../services/users-service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../../../services/auth-service';
 import {Header} from '../../../interfaces/header';
+import {sleep} from '../../../helpers/utilities.helper';
 
 @Component({
   selector: 'app-header-component',
@@ -21,7 +21,6 @@ export class HeaderComponent  implements OnInit{
     private router: Router,
     private route: ActivatedRoute,
     private readonly userService: UsersService,
-    private readonly utilitiesService: UtilitiesService
   ) {
 
   }
@@ -141,7 +140,7 @@ export class HeaderComponent  implements OnInit{
 
 
   async selectionMenu() {
-    await this.utilitiesService.sleep(0)
+    await sleep(0)
     let item = this.router.url.split("/")[1]
 
     console.log(item)

@@ -1,16 +1,12 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {User} from '../../../interfaces/users';
-import {Product} from '../../../interfaces/products';
-import {UtilitiesService} from '../../../services/utilities-service';
 import {UsersService} from '../../../services/users-service';
-import {
-  AddProductModalComponent
-} from '../manage-products-component/add-product-modal-component/add-product-modal-component';
 import {ModalService} from '../../../services/modal-service';
 import {AuthService} from '../../../services/auth-service';
 import {AddUserComponent} from './add-user-component/add-user-component';
 import {EditUserComponent} from './edit-user-component/edit-user-component';
 import {ConfirmationModalComponent} from '../general/confirmation-modal-component/confirmation-modal-component';
+import {getImageUrl, transformDate} from '../../../helpers/utilities.helper';
 
 @Component({
   selector: 'app-manage-users-component',
@@ -22,7 +18,7 @@ export class ManageUsersComponent implements OnInit {
 
   users: User[] = []
 
-  constructor(private  readonly utilitiesService: UtilitiesService, private readonly usersService: UsersService,private cd: ChangeDetectorRef, private readonly modalService: ModalService, private readonly authService: AuthService) {
+  constructor( private readonly usersService: UsersService,private cd: ChangeDetectorRef, private readonly modalService: ModalService, private readonly authService: AuthService) {
   }
 
   ngOnInit() {
@@ -123,10 +119,10 @@ export class ManageUsersComponent implements OnInit {
   }
 
   getImageUrl(item: User | undefined): string {
-   return this.utilitiesService.getImageUrl(item?.images[0])
+   return getImageUrl(item?.images[0])
   }
 
   getDates(date: string){
-    return this.utilitiesService.transformDate(date)
+    return transformDate(date)
   }
 }

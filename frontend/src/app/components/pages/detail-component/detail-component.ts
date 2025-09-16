@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {Images, Product} from '../../../interfaces/products';
-import {UtilitiesService} from '../../../services/utilities-service';
+import { getImageUrl } from '../../../helpers/utilities.helper';
 
 @Component({
   selector: 'app-detail-component',
@@ -15,11 +15,11 @@ export class DetailComponent {
   confirm!: (result?: any) => void;
   close!: () => void;
 
-  constructor(private utilitiesService: UtilitiesService,) {
+  constructor() {
   }
 
   getImageUrl(item: Images | undefined): string {
-    return this.utilitiesService.getImageUrl(item)
+    return getImageUrl(item)
   }
 
   getCoverImage(){

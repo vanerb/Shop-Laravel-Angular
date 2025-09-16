@@ -97,4 +97,21 @@ class AuthController extends Controller
                $request->user()->tokens()->delete();
                return response()->json(['message' => 'Logout exitoso']);
            }
+
+       public function changePassword(Request $request, $id){
+         $request->validate([
+                          'password' => 'required|string',
+                          'repeatPassword' => 'required|string',
+                      ]);
+        $user = User::where('id', $id)->first();
+
+        if($user->password === $user->repeatPassword){
+         $user->password = Hash::make($request->password);
+        }
+    else{
+      return response()->json(['message' => 'Las contraseñas no coinciden']);
+    }
+
+
+       }
 }

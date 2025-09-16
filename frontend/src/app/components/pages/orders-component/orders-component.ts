@@ -1,5 +1,4 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {UtilitiesService} from '../../../services/utilities-service';
 import {Order} from '../../../interfaces/order';
 import {BasketService} from '../../../services/basket-service';
 import {AuthService} from '../../../services/auth-service';
@@ -14,7 +13,7 @@ export class OrdersComponent implements OnInit{
   orders: Order[] = []
   type: string | null | false = false
 
-  constructor(private basketService: BasketService, private cd: ChangeDetectorRef, private readonly utilitiesService: UtilitiesService, private authService: AuthService) {}
+  constructor(private basketService: BasketService, private cd: ChangeDetectorRef, private authService: AuthService) {}
 
   ngOnInit() {
     this.type = this.authService.getType()

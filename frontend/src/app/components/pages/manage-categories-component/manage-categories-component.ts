@@ -1,7 +1,6 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Product} from '../../../interfaces/products';
 import {ProductsService} from '../../../services/products-service';
-import {UtilitiesService} from '../../../services/utilities-service';
 import {Category} from '../../../interfaces/categories';
 import {CategoriesService} from '../../../services/categories-service';
 import {ModalService} from '../../../services/modal-service';
@@ -10,6 +9,7 @@ import {EditCategoryModalComponent} from './edit-category-modal-component/edit-c
 import {ConfirmationModalComponent} from '../general/confirmation-modal-component/confirmation-modal-component';
 import {User} from '../../../interfaces/users';
 import {AuthService} from '../../../services/auth-service';
+import {transformDate} from '../../../helpers/utilities.helper';
 
 @Component({
   selector: 'app-manage-categories-component',
@@ -22,7 +22,7 @@ export class ManageCategoriesComponent implements OnInit {
 
   type: string | null | false = null;
 
-  constructor(private categoriesService: CategoriesService, private cd: ChangeDetectorRef, private readonly utilitiesService: UtilitiesService, private modalService: ModalService, private authService: AuthService) {}
+  constructor(private categoriesService: CategoriesService, private cd: ChangeDetectorRef, private modalService: ModalService, private authService: AuthService) {}
 
   ngOnInit() {
 
@@ -52,7 +52,7 @@ export class ManageCategoriesComponent implements OnInit {
 
 
   getDates(date: string){
-    return this.utilitiesService.transformDate(date)
+    return transformDate(date)
   }
 
   add(){

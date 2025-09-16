@@ -1,53 +1,132 @@
 <app-container-component>
-  <div>
-    <form [formGroup]="form"
-          style="width: 100%; height: 100%;">
 
-      <div style="height: 100%; width: 100%; ">
-        <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px; color: white">
-          <span>Editar información personal</span>
-        </div>
-        <div style="display: flex; flex-direction: column">
-          <label style="color: white" class="text-primary" for="name">Nombre</label>
-          <input formControlName="name"
-                 style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
-                 type="text" id="name" placeholder="Introduzca un nombre válido">
-        </div>
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center">
+      <div style="width: 800px; background-color: #1a1d20; padding: 20px; border-radius: 5px">
+        <form [formGroup]="formInformation"
+            style="width: 100%; height: 100%;">
+
+        <div style="height: 100%; width: 100%; ">
+          <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px; color: white">
+            <span>Editar información personal</span>
+          </div>
+          <div style="width: 100%; display: flex; justify-content: center; align-items: center">
+            <div style="width: fit-content; display: flex; justify-content: center; align-items: end">
+              <div style="width: 220px; height: 220px; overflow: hidden; border-radius: 50%; margin: 0 auto;">
+                <img src="{{ getImageUrl(user.images[0]) }}" alt="No Image"
+                     style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                #fileInput
+                hidden
+                (change)="onImageChange($event)"
+              />
+
+              <!-- Botón que abre el selector -->
+              <button
+                type="button"
+                (click)="fileInput.click()"
+                style="margin-left: -70px; border-radius: 50px; width:50px; height: 50px"
+              >
+                ✏️
+              </button>
+            </div>
+
+          </div>
+          <div style="display: flex; flex-direction: column;">
+            <label style="color: white" class="text-primary" for="name">Nombre</label>
+            <input formControlName="name"
+                   style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 1px black solid"
+                   type="text" id="name" placeholder="Introduzca un nombre válido">
+          </div>
+
+          <div style="display: flex; flex-direction: column; margin-top: 20px">
+            <label style="color: white" class="text-primary" for="subname">Apellidos</label>
+            <input formControlName="subname"
+                   style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
+                   type="text" id="subname" placeholder="Introduzca una descripcion válida">
+          </div>
+
+          <div style="display: flex; flex-direction: column; margin-top: 20px">
+            <label style="color: white" class="text-primary" for="email">Email</label>
+            <input formControlName="email"
+                   style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
+                   type="text" id="email" placeholder="Introduzca un precio válido">
+          </div>
+
+          <div style="display: flex; flex-direction: column; margin-top: 20px;">
+            <div style="display: block; justify-content: center; align-items: center; ">
+              <div>
+                <span style="color: white">Numero de telefono</span>
+              </div>
+              <div style="display: flex; justify-content: start; align-items: start; width: 100%">
+                <div style="width: 20%; margin-right: 30px">
+                  <input formControlName="prefix"
+                         style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid; width: 100%"
+                         type="text" id="prefix" placeholder="Introduzca un precio válido">
+                </div>
+                <div style="width: 40%">
+                  <input formControlName="phone"
+                         style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid; width: 100%"
+                         type="text" id="phone" placeholder="Introduzca un precio válido">
+                </div>
+              </div>
 
 
-        <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: white">
-          <span>Editar contraseña</span>
+            </div>
+
+          </div>
+        </div>
+        <div style="width: 100%; margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+
+          <div style="width: 100%; display: flex; justify-content: end; align-items: center">
+            <button (click)="update()"
+                    style="width: 100%; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer; height: 40px;">
+              Actualizar información
+            </button>
+          </div>
+
         </div>
 
-        <div style="display: flex; flex-direction: column; margin-top: 20px">
-          <label style="color: white" class="text-primary" for="password">Contraseña</label>
-          <input formControlName="password"
-                 style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
-                 type="password" id="password" placeholder="Introduzca una contraseña válida">
-        </div>
-        <div style="display: flex; flex-direction: column; margin-top: 20px">
-          <label style="color: white" class="text-primary" for="repeat_password">Repetir Contraseña</label>
-          <input formControlName="password_confirmation"
-                 style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
-                 type="password" id="repeat_password" placeholder="Repita la contraseña">
-        </div>
+      </form>
 
+      <div style="width: 100%">
+        <form [formGroup]="formPassword">
+          <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: white">
+            <span>Editar contraseña</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; margin-top: 20px">
+            <label style="color: white" class="text-primary" for="password">Contraseña</label>
+            <input formControlName="password"
+                   style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
+                   type="password" id="password" placeholder="Introduzca una contraseña válida">
+          </div>
+          <div style="display: flex; flex-direction: column; margin-top: 20px">
+            <label style="color: white" class="text-primary" for="repeatPassword">Repetir Contraseña</label>
+            <input formControlName="repeatPassword"
+                   style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
+                   type="password" id="repeatPassword" placeholder="Repita la contraseña">
+          </div>
+
+          <div style="width: 100%; display: flex; justify-content: end; align-items: center; margin-top: 20px">
+            <button (click)="changePassword()"
+                    style="width: 100%; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer; height: 40px;">
+              Cambiar Contraseña
+            </button>
+          </div>
+        </form>
       </div>
-      <div style="width: 100%; margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
-
-        <div style="width: 100%; display: flex; justify-content: end; align-items: center">
-          <button (click)="updateProfile()"
-                  style="width: 100%; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer; height: 40px;">
-            Actualizar información
-          </button>
-        </div>
-
-      </div>
-
-    </form>
 
 
-    <button (click)="logout()" style="cursor: pointer;width: 100%; background-color: red; color: var(--text-inverted); border-radius: 10px; margin-top: 20px; border: 1px red solid; height: 40px; padding: 8px 16px; color: white">Cerrar sesión</button>
+
+      <button (click)="logout()"
+              style="cursor: pointer;width: 100%; background-color: red; color: var(--text-inverted); border-radius: 10px; margin-top: 20px; border: 1px red solid; height: 40px; padding: 8px 16px; color: white">
+        Cerrar sesión
+      </button>
+    </div>
   </div>
+
 
 </app-container-component>

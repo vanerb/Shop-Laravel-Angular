@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Login, Token} from '../interfaces/auth';
+import {ChangePassword, Login, Token} from '../interfaces/auth';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {CreateUser, User} from '../interfaces/users';
@@ -71,6 +71,11 @@ export class AuthService {
     return this.http.post<Token>(this.base + '/register', user)
   }
 
+  changePassword(id: number, data: FormData){
+    let headers = new HttpHeaders().set('Authorization', `Bearer ${this.getToken()}`);
+    return this.http.post<ChangePassword>(this.base + '/changePassword/'+id, data, {headers})
+  }
+
   setToken(token: string) {
     localStorage.setItem('token', token);
   }
@@ -78,5 +83,6 @@ export class AuthService {
   logout() {
     localStorage.removeItem('token');
     this.deleteType()
+    this.router.navigate(['/login'])
   }
 }

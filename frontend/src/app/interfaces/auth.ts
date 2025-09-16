@@ -9,3 +9,8 @@ export interface Token{
   access_token:string,
   type: string
 }
+
+export interface ChangePassword{
+  password: string;
+  repeatPassword: string;
+}

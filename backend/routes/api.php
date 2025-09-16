@@ -20,6 +20,7 @@ Route::delete('users/{id}', [UserController::class, 'destroy']);
 // Rutas protegidas
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
+     Route::post('/changePassword/{id}', [AuthController::class, 'changePassword']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 

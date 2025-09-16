@@ -1,44 +1,51 @@
 <app-container-component>
 
-  <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
-    <div style="width: 80%;">
-      <div style="width: 100%; display: flex; justify-content: center; align-items: center">
-        <h2 class="text-primary">LOGIN</h2>
+  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%">
+    <div style="width: 800px; padding: 20px; background-color: #1a1d20; border-radius: 5px">
+      <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
+        <div style="width: 80%;">
+          <div style="width: 100%; display: flex; justify-content: center; align-items: center">
+            <h2 class="text-primary"  style="color: white" >LOGIN</h2>
+          </div>
+
+          <form [formGroup]="form" (ngSubmit)="login()"
+                style="width: 100%; height: 100%; background-color: var(--background-four); padding: 20px; border: 2px transparent solid; border-radius: 5px">
+
+            <div style="height: 100%; width: 100%; ">
+              <div style="display: flex; flex-direction: column;">
+                <label style="color: white" class="text-primary" for="email">Email</label>
+                <input formControlName="email"
+                       style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
+                       type="text" id="email" placeholder="Introduzca un correo válido">
+              </div>
+
+              <div style="display: flex; flex-direction: column; margin-top: 20px">
+                <label  style="color: white"  class="text-primary" for="email">Contraseña</label>
+                <input formControlName="password"
+                       style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
+                       type="password" id="password" placeholder="Introduzca una contraseña válida">
+              </div>
+            </div>
+            <div style="width: 100%; margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+              <div style="width: 100%">
+            <span class="text-primary" style="font-size: 14px; color: white">Si no tienes cuenta puedes crear pulsando <a
+              [routerLink]="['/register']"  style="color: white" >aquí</a></span>
+              </div>
+              <div style="width: 100%; display: flex; justify-content: end; align-items: center">
+                <button type="submit"
+                        style="padding-left: 16px; padding-right: 16px; height: 40px; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer">
+                  Entrar
+                </button>
+              </div>
+
+            </div>
+
+          </form>
+        </div>
       </div>
-
-      <form [formGroup]="form" (ngSubmit)="login()"
-            style="width: 100%; height: 100%; background-color: var(--background-four); padding: 20px; border: 2px transparent solid; border-radius: 5px">
-
-        <div style="height: 100%; width: 100%; ">
-          <div style="display: flex; flex-direction: column;">
-            <label class="text-primary" for="email">Email</label>
-            <input formControlName="email"
-                   style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
-                   type="text" id="email" placeholder="Introduzca un correo válido">
-          </div>
-
-          <div style="display: flex; flex-direction: column; margin-top: 20px">
-            <label class="text-primary" for="email">Contraseña</label>
-            <input formControlName="password"
-                   style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
-                   type="password" id="password" placeholder="Introduzca una contraseña válida">
-          </div>
-        </div>
-        <div style="width: 100%; margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
-          <div style="width: 100%">
-            <span class="text-primary" style="font-size: 14px">Si no tienes cuenta puedes crear pulsando <a
-              [routerLink]="['/register']">aquí</a></span>
-          </div>
-          <div style="width: 100%; display: flex; justify-content: end; align-items: center">
-            <button type="submit"
-                    style="cursor: pointer;padding: 8px 16px;border-radius: 5px; border: 2px var(--background-one) solid; background-color: var(--background-one); color: var(--text-inverted)">
-              Entrar
-            </button>
-          </div>
-
-        </div>
-
-      </form>
     </div>
+
   </div>
+
+
 </app-container-component>

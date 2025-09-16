@@ -1,11 +1,10 @@
 import {ChangeDetectorRef, Component, Input} from '@angular/core';
 import {Product} from '../../../../interfaces/products';
 import {BasketService} from '../../../../services/basket-service';
-import {Category} from '../../../../interfaces/categories';
 import {AddProductBasket} from '../../../../interfaces/basket';
 import {ModalService} from '../../../../services/modal-service';
 import {DetailComponent} from '../../detail-component/detail-component';
-import {UtilitiesService} from '../../../../services/utilities-service';
+import {getImageUrl} from '../../../../helpers/utilities.helper';
 
 @Component({
   selector: 'app-product-card-component',
@@ -17,11 +16,11 @@ export class ProductCardComponent {
 
   @Input() item?: Product;
 
-  constructor(private  readonly basketService: BasketService, private cd: ChangeDetectorRef, private modalService: ModalService,private readonly utilitiesService: UtilitiesService) {
+  constructor(private  readonly basketService: BasketService, private cd: ChangeDetectorRef, private modalService: ModalService) {
   }
 
   getImageUrl(item: Product | undefined): string {
-   return this.utilitiesService.getImageUrl(item?.images[0])
+   return getImageUrl(item?.images[0])
   }
 
 
@@ -45,6 +44,7 @@ export class ProductCardComponent {
   openDetails(item: Product | undefined){
     this.modalService.open(DetailComponent, {
       width: '90%',
+      height: '90%',
     }, {product: item}).then( (product: Product) => {
 
       this.addProductBasket(product)

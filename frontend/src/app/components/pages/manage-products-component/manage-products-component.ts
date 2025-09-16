@@ -1,16 +1,12 @@
 import {ChangeDetectorRef, Component, NgZone, OnInit} from '@angular/core';
 import {Product} from '../../../interfaces/products';
 import {ProductsService} from '../../../services/products-service';
-import {UtilitiesService} from '../../../services/utilities-service';
-import {
-  AddCategoryModalComponent
-} from '../manage-categories-component/add-category-modal-component/add-category-modal-component';
-import {Category} from '../../../interfaces/categories';
 import {ModalService} from '../../../services/modal-service';
 import {AddProductModalComponent} from './add-product-modal-component/add-product-modal-component';
 import {ConfirmationModalComponent} from '../general/confirmation-modal-component/confirmation-modal-component';
 import {EditProductModalComponent} from './edit-product-modal-component/edit-product-modal-component';
 import {AuthService} from '../../../services/auth-service';
+import {getImageUrl, transformDate} from '../../../helpers/utilities.helper';
 
 @Component({
   selector: 'app-manage-products-component',
@@ -21,7 +17,7 @@ import {AuthService} from '../../../services/auth-service';
 export class ManageProductsComponent implements OnInit {
   products: Product[] = []
   type: string | false | null = false;
-  constructor(private productsService: ProductsService, private cd: ChangeDetectorRef, private readonly utilitiesService: UtilitiesService, private readonly modalService: ModalService,private zone: NgZone, private authService: AuthService) {
+  constructor(private productsService: ProductsService, private cd: ChangeDetectorRef, private readonly modalService: ModalService,private zone: NgZone, private authService: AuthService) {
 
   }
 
@@ -53,12 +49,12 @@ export class ManageProductsComponent implements OnInit {
   }
 
   getImageUrl(item: Product | undefined): string {
-   return  this.utilitiesService.getImageUrl(item?.images[0])
+   return  getImageUrl(item?.images[0])
   }
 
 
   getDates(date: string){
-    return this.utilitiesService.transformDate(date)
+    return transformDate(date)
   }
 
   add(){

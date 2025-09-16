@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {User} from '../../../../interfaces/users';
 import {Images} from '../../../../interfaces/products';
-import {UtilitiesService} from '../../../../services/utilities-service';
+import { getImageUrl } from '../../../../helpers/utilities.helper';
 
 @Component({
   selector: 'app-edit-user-component',
@@ -21,7 +21,7 @@ export class EditUserComponent implements OnInit {
   existingCoverImage: Images | null = null;
   deletedCoverImage: boolean = false;
 
-  constructor(private fb: FormBuilder, private utilities: UtilitiesService) {
+  constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       name: ['', [Validators.required]],
       subname: ['', [Validators.required]],
@@ -86,7 +86,7 @@ export class EditUserComponent implements OnInit {
   }
 
   getImageUrl(item: Images | undefined): string {
-    return this.utilities.getImageUrl(item)
+    return getImageUrl(item)
   }
 
   onImageChange(event: Event) {

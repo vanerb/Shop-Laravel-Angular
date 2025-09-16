@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Category} from '../../../../interfaces/categories';
 import {CategoriesService} from '../../../../services/categories-service';
 import {Images, Product} from '../../../../interfaces/products';
-import {UtilitiesService} from '../../../../services/utilities-service';
+import { getImageUrl } from '../../../../helpers/utilities.helper';
 
 @Component({
   selector: 'app-edit-product-modal-component',
@@ -36,7 +36,7 @@ export class EditProductModalComponent implements OnInit, AfterViewInit{
     private fb: FormBuilder,
     private readonly categoriesService: CategoriesService,
     private cd: ChangeDetectorRef,
-    private utilitiesService: UtilitiesService,
+
   ) {
     this.form = this.fb.group({
       name: ['', Validators.required],
@@ -98,7 +98,7 @@ export class EditProductModalComponent implements OnInit, AfterViewInit{
   }
 
   getImageUrl(image: Images): string {
-    return this.utilitiesService.getImageUrl(image)
+    return getImageUrl(image)
   }
 
   delete(pos: number) {
