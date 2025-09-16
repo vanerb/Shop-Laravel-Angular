@@ -1,1 +1,45 @@
-<p>basket-card-component works!</p>
+<div style="width: 100%; height: 140px; background-color: white; border-radius: 10px; margin-top: 20px">
+  <div style="display: flex; padding: 20px; gap:20px">
+    <div style="width: 100px;">
+      <div style="width: 100%; flex: 0 0 0; overflow: hidden;">
+        <img src="{{ getImageUrl(product.images[0]) }}" alt="No Image"
+             style="width: auto; height: 100px; display: block; margin: 0 auto; object-fit: contain; object-position: center;">
+      </div>
+    </div>
+
+
+    <div style=" width: 90%;">
+      <div>
+        <p>{{ product.name }}</p>
+      </div>
+
+      <div style="width: 80%; flex: 0 0 auto;">
+        <p style="
+
+      display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2em;
+  max-height: calc(1.2em * 3);
+  word-break: break-word;       /* rompe palabras largas */
+  overflow-wrap: break-word;    /* soporte adicional */
+    ">
+          {{ product.description}}
+        </p>
+      </div>
+
+    </div>
+
+    <div style="width: 20%; display: flex; justify-content: center; align-items: center" [ngClass]="{ 'width: 30%': viewMode ==='view', 'width: 20%': viewMode ==='editable' }">
+      <span>{{ product.pivot.quantity }}x </span>
+      <span> {{ product.price }} €</span>
+    </div>
+
+    <div *ngIf="viewMode==='editable'" style="width: 10%; display: flex; justify-content: center; align-items: center">
+      <button style="width: 100%; height: 40px; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer" (click)="removeProductBasket(product)">Eliminar</button>
+    </div>
+  </div>
+
+</div>

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {Basket} from '../../../../interfaces/basket';
 
 @Component({
   selector: 'app-category-card-component',
@@ -7,5 +8,6 @@ import { Component } from '@angular/core';
   styleUrl: './category-card-component.css'
 })
 export class CategoryCardComponent {
+
 
 }

@@ -1,44 +1,48 @@
 <app-container-component>
   <div style="width: 100%; height: 100%;">
-    <div>
-      <form style="width: 100%; height: 100%;">
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center">
+      <div style="width: 800px; padding: 20px; border-radius: 5px">
 
-        <div style="width: 100%; text-align: center; color: white">
-          <span style="font-size: 24px; font-weight: bold">Contacto</span>
-        </div>
-        <div style="height: 100%; width: 100%;">
-          <div style="display: flex; flex-direction: column; margin-top: 20px">
-            <label class="text-primary" style="color: white" for="name">Nombre</label>
-            <input style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 1px var(--background-one) solid"
-                   type="text" id="name" placeholder="Introduzca un nombre válido">
+        <form style="width: 100%; height: 100%;">
+
+          <div style="width: 100%; text-align: center; color: white">
+            <span style="font-size: 24px; font-weight: bold">Contacto</span>
           </div>
+          <div style="height: 100%; width: 100%;">
+            <div style="display: flex; flex-direction: column; margin-top: 20px">
+              <label class="text-primary" style="color: white" for="name">Nombre</label>
+              <input style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 1px var(--background-one) solid"
+                     type="text" id="name" placeholder="Introduzca un nombre válido">
+            </div>
 
-          <div style="display: flex; flex-direction: column; margin-top: 20px">
-            <label style="color: white" class="text-primary" for="email">Email</label>
-            <input style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 1px var(--background-one) solid"
-                   type="email" id="email" placeholder="Introduzca un correo válido">
+            <div style="display: flex; flex-direction: column; margin-top: 20px">
+              <label style="color: white" class="text-primary" for="email">Email</label>
+              <input style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 1px var(--background-one) solid"
+                     type="email" id="email" placeholder="Introduzca un correo válido">
+            </div>
+
+            <div style="display: flex; flex-direction: column; margin-top: 20px">
+              <label style="color: white" class="text-primary" for="description">Consulta</label>
+              <textarea style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 1px var(--background-one) solid"
+                        type="text" id="description" placeholder="Introduzca la consulta" rows="15"></textarea>
+            </div>
+
+
           </div>
+          <div style="width: 100%; margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
 
-          <div style="display: flex; flex-direction: column; margin-top: 20px">
-            <label style="color: white" class="text-primary" for="description">Consulta</label>
-            <textarea style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 1px var(--background-one) solid"
-                      type="text" id="description" placeholder="Introduzca la consulta" rows="15"></textarea>
+            <div style="width: 100%; display: flex; justify-content: end; align-items: center">
+
+              <button
+                style="background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer; height: 40px;padding-right: 16px; padding-left: 16px">
+                Enviar
+              </button>
+            </div>
           </div>
-
-
-        </div>
-        <div style="width: 100%; margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
-
-          <div style="width: 100%; display: flex; justify-content: end; align-items: center">
-
-            <button
-              style="background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer; height: 40px;padding-right: 16px; padding-left: 16px">
-              Enviar
-            </button>
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
+
   </div>
 </app-container-component>
 
