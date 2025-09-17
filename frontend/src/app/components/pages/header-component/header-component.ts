@@ -28,7 +28,7 @@ export class HeaderComponent  implements OnInit{
   async ngOnInit() {
     if (this.authService.isLoggedIn()) {
       this.menu = [
-        {
+       /* {
           key: "init",
           name: "Inicio",
           position: "left",
@@ -36,7 +36,7 @@ export class HeaderComponent  implements OnInit{
             await this.router.navigate(['/']);
             await this.selectionMenu();
           }
-        },
+        },*/
         {
           key: "shop",
           name: "Tienda",

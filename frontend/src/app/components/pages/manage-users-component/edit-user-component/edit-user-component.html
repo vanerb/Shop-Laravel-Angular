@@ -26,20 +26,25 @@
                type="text" id="email" placeholder="Introduzca un precio válido">
       </div>
 
-      <div style="display: flex; flex-direction: column; margin-top: 20px">
-        <div style="display: flex; justify-content: center; align-items: center">
-          <div style="width: 20%">
-            <label class="text-primary" for="prefix">Prefijo</label>
-            <input formControlName="prefix"
-                   style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
-                   type="text" id="prefix" placeholder="Introduzca un precio válido">
+      <div style="display: flex; flex-direction: column; margin-top: 20px;">
+        <div style="display: block; justify-content: center; align-items: center; ">
+          <div>
+            <span >Numero de telefono</span>
           </div>
-          <div style="width: 80%">
-            <label class="text-primary" for="phone">Telefono</label>
-            <input formControlName="phone"
-                   style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
-                   type="text" id="phone" placeholder="Introduzca un precio válido">
+          <div style="display: flex; justify-content: start; align-items: start; width: 100%">
+            <div style="width: 20%; margin-right: 30px">
+              <input formControlName="prefix"
+                     style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid; width: 100%"
+                     type="text" id="prefix" placeholder="Introduzca un precio válido">
+            </div>
+            <div style="width: 40%">
+              <input formControlName="phone"
+                     style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid; width: 100%"
+                     type="text" id="phone" placeholder="Introduzca un precio válido">
+            </div>
           </div>
+
+
         </div>
 
       </div>

@@ -38,7 +38,7 @@ export class EditUserComponent implements OnInit {
 
     this.form.patchValue({
       name: this.user?.name || '',
-      subname: this.user.subname || '',
+      subname: this.user?.subname || '',
       email: this.user?.email || '',
       prefix: this.user?.prefix || '',
       phone: this.user?.phone || '',

@@ -1,1 +1,120 @@
-<p>register-component works!</p>
+<app-container-component>
+
+  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%">
+    <div style="width: 800px; height: 100%; overflow: auto; background-color: #1a1d20; border-radius: 5px; padding: 20px">
+      <div>
+        <div>
+          <div style="text-align: center; padding-right: 20px; padding-left: 20px">
+            <h2 class="text-primary"  style="color: white" >REGISTRO</h2>
+          </div>
+
+          <form [formGroup]="form"
+                style="background-color: var(--background-four); border: 2px transparent solid; border-radius: 5px">
+
+            <div>
+
+              <div style=" display: flex; justify-content: center; align-items: center">
+                <div style="width: fit-content; display: flex; justify-content: center; align-items: end">
+                  <div style="width: 150px; height: 150px; overflow: hidden; border-radius: 50%; margin: 0 auto;">
+                    <img src="{{ this.previewCoverImage }}" alt="No Image"
+                         style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    #fileInput
+                    hidden
+                    (change)="onImageChange($event)"
+                  />
+
+                  <!-- Botón que abre el selector -->
+                  <button
+                    type="button"
+                    (click)="fileInput.click()"
+                    style="margin-left: -50px; border-radius: 50px; width:50px; height: 50px"
+                  >
+                    ✏️
+                  </button>
+                </div>
+
+              </div>
+
+              <div style=" display: flex; flex-direction: column;">
+                <label style="color: white" class="text-primary" for="name">Nombre</label>
+                <input formControlName="name"
+                       style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 1px black solid"
+                       type="text" id="name" placeholder="Introduzca un nombre válido">
+              </div>
+
+              <div style="display: flex; flex-direction: column; margin-top: 20px">
+                <label style="color: white" class="text-primary" for="subname">Apellidos</label>
+                <input formControlName="subname"
+                       style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
+                       type="text" id="subname" placeholder="Introduzca una descripcion válida">
+              </div>
+
+              <div style="display: flex; flex-direction: column; margin-top: 20px">
+                <label style="color: white" class="text-primary" for="email">Email</label>
+                <input formControlName="email"
+                       style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
+                       type="text" id="email" placeholder="Introduzca un precio válido">
+              </div>
+
+              <div style="display: flex; flex-direction: column; margin-top: 20px;">
+                <div style="display: block; justify-content: center; align-items: center; ">
+                  <div>
+                    <span style="color: white">Numero de telefono</span>
+                  </div>
+                  <div style="display: flex; justify-content: start; align-items: start; width: 100%">
+                    <div style="width: 20%; margin-right: 30px">
+                      <input formControlName="prefix"
+                             style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid; width: 100%"
+                             type="text" id="prefix" placeholder="Introduzca un precio válido">
+                    </div>
+                    <div style="width: 40%">
+                      <input formControlName="phone"
+                             style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid; width: 100%"
+                             type="text" id="phone" placeholder="Introduzca un precio válido">
+                    </div>
+                  </div>
+
+
+                </div>
+
+              </div>
+              <div style="display: flex; flex-direction: column; margin-top: 20px">
+                <label style="color: white" class="text-primary" for="password">Contraseña</label>
+                <input formControlName="password"
+                       style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
+                       type="text" id="password" placeholder="Introduzca un precio válido">
+              </div>
+              <div style="display: flex; flex-direction: column; margin-top: 20px">
+                <label style="color: white" class="text-primary" for="repeatPassword">Repetir contraseña</label>
+                <input formControlName="repeatPassword"
+                       style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
+                       type="text" id="repeatPassword" placeholder="Introduzca un precio válido">
+              </div>
+            </div>
+            <div style=" margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+              <div style="width: 100%">
+            <span class="text-primary" style="font-size: 14px; color: white">Si tienes cuenta puedes iniciar sesión pulsando <a
+              [routerLink]="['/register']"  style="color: white" >aquí</a></span>
+              </div>
+              <div style="width: 100%; display: flex; justify-content: end; align-items: center">
+                <button (click)="register()"
+                        style="padding-left: 16px; padding-right: 16px; height: 40px; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer">
+                  Crear cuenta
+                </button>
+              </div>
+
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+</app-container-component>
