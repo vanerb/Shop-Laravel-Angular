@@ -17,7 +17,6 @@ import {AuthGuard} from './guards/auth-guard';
 import {ProcessOrderComponent} from './components/pages/process-order-component/process-order-component';
 
 const routes: Routes = [
-  {path: '', component: IndexComponent},
   {path: 'login', component: LoginComponent},
   {path: 'shop', component: ShopComponent, canActivate: [AuthGuard]},
   {path: 'basket', component: BasketComponent, canActivate: [AuthGuard]},
@@ -31,7 +30,7 @@ const routes: Routes = [
   {path: 'administration', component: AdminMainComponent, canActivate: [AuthGuard]},
   {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
   {path: 'contact', component: ContactComponent, canActivate: [AuthGuard]},
-  {path: '**', redirectTo: ''}
+  {path: '**', redirectTo: 'shop'}
 ];
 
 @NgModule({

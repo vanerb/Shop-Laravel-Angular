@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate {
     if (isLoggedIn) {
       // Si está logueado y va a login/register, redirige al home
       if (currentRoute && publicRoutes.includes(currentRoute)) {
-        return this.router.createUrlTree(['/']);
+        return this.router.createUrlTree(['/shop']);
       }
       return true; // deja pasar
     } else {

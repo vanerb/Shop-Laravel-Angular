@@ -56,7 +56,7 @@ export class AuthService {
       next: async (token: Token) => {
         this.setToken(token.access_token);
         this.setType(token.type)
-        await this.router.navigate(['/']);
+        await this.router.navigate(['/shop']);
         window.location.reload()
 
       },
