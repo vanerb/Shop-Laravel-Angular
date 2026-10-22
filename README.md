@@ -1,34 +1,54 @@
-# Tienda online simulada
+<div align="center">
 
-Proyecto de portfolio que reproduce el flujo de una tienda online. Incluye una tienda para clientes, una API propia y un panel de administración. Los pedidos se guardan en la base de datos local; no se realizan cobros reales ni se conecta con servicios externos de pago.
+![Tienda online simulada: proyecto de portfolio con Angular y Laravel](docs/portfolio-banner.svg)
 
-## Funcionalidades
+[![Angular 20](https://img.shields.io/badge/Angular-20-DD0031?logo=angular&logoColor=white)](https://angular.dev/)
+[![Laravel 12](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)](https://laravel.com/)
+[![PHP 8.2+](https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
+[![SQLite](https://img.shields.io/badge/SQLite-local-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 
-- Catálogo de productos y categorías, con vista de detalle.
-- Registro, inicio y cierre de sesión.
-- Perfil de usuario, cesta y consulta de pedidos.
-- Proceso de compra con el total calculado en el servidor.
-- Panel de administración para gestionar productos, categorías, usuarios y pedidos.
-- Subida y gestión de imágenes de productos.
-- Protección de rutas y operaciones de administración mediante autenticación y roles.
+**Una tienda de portfolio de principio a fin:** catálogo, cesta, pedidos y administración.
 
-## Tecnologías
+</div>
 
-- **Frontend:** Angular 20, TypeScript, Signals y RxJS.
-- **Backend:** Laravel 12, PHP 8.2 o superior y Laravel Sanctum.
-- **Base de datos local:** SQLite.
+## Sobre el proyecto
 
-## Requisitos
+Aplicación web que simula la experiencia de una tienda online. El frontend Angular consume una API REST desarrollada con Laravel; para ejecutarla en local, los datos se guardan en SQLite.
 
-- PHP 8.2 o superior y Composer.
-- Node.js y npm.
-- Windows PowerShell (los comandos de instalación siguientes usan PowerShell).
+> Es una simulación: no procesa pagos reales ni se conecta con una pasarela de pago.
 
-## Instalación y ejecución local
+## Qué puedes hacer
 
-### 1. Preparar el backend
+| En la tienda | En administración |
+| --- | --- |
+| Explorar productos y categorías | Crear, editar y eliminar productos |
+| Crear una cuenta e iniciar sesión | Gestionar categorías |
+| Añadir productos a la cesta y finalizar un pedido | Consultar y gestionar pedidos |
+| Editar el perfil y consultar pedidos anteriores | Administrar usuarios |
+| Ver imágenes y detalles de cada producto | Subir y actualizar imágenes |
 
-Desde la carpeta raíz del proyecto, abre una terminal PowerShell:
+Las operaciones privadas usan autenticación con Laravel Sanctum. El backend calcula el total del pedido al confirmarlo.
+
+## Cómo está construido
+
+```mermaid
+flowchart LR
+    Cliente[Angular 20<br/>Signals y RxJS] -->|HTTP / JSON| API[Laravel 12<br/>API REST + Sanctum]
+    API --> DB[(SQLite local)]
+    API --> Media[Almacenamiento de imágenes]
+```
+
+## Ejecutarlo en local
+
+### Requisitos
+
+- PHP 8.2 o superior y Composer
+- Node.js y npm
+- PowerShell para usar los comandos de esta guía
+
+### 1. Instalar y preparar la API
+
+Desde la carpeta raíz del proyecto:
 
 ```powershell
 cd backend
@@ -48,19 +68,14 @@ if (Select-String -Path .env -Pattern '^APP_KEY=$' -Quiet) {
 
 php artisan migrate
 php artisan storage:link
-```
-
-Inicia la API:
-
-```powershell
 php artisan serve --host=127.0.0.1 --port=8000
 ```
 
-La API estará disponible en `http://127.0.0.1:8000/api`.
+La API queda en `http://127.0.0.1:8000/api`. Mantén esa terminal abierta.
 
-### 2. Preparar el frontend
+### 2. Instalar y arrancar Angular
 
-En otra terminal PowerShell, desde la raíz del proyecto:
+Abre otra terminal PowerShell desde la raíz:
 
 ```powershell
 cd frontend
@@ -68,26 +83,26 @@ npm install
 npm start
 ```
 
-Abre `http://localhost:4200` en el navegador. El frontend usa el nombre de host desde el que se abre para construir la dirección de la API. La configuración CORS inicial permite `localhost:4200` y `127.0.0.1:4200`.
+Visita `http://localhost:4200`. En local, la configuración CORS permite `localhost:4200` y `127.0.0.1:4200`.
 
-## Crear una cuenta de administrador
+## Activar el panel de administración
 
-Regístrate desde la tienda. El registro público crea una cuenta normal; no hay una cuenta de administrador ni credenciales demo preconfiguradas.
+Regístrate desde la tienda. Las cuentas nuevas son usuarios normales; no hay una cuenta admin ni credenciales de demostración preconfiguradas.
 
-Con la API detenida o en una terminal adicional, entra en `backend` y abre Tinker:
+En otra terminal, abre Tinker desde `backend`:
 
 ```powershell
 cd backend
 php artisan tinker
 ```
 
-Promueve tu cuenta sustituyendo el correo por el que usaste al registrarte:
+En Tinker, cambia el rol de tu cuenta usando el correo con el que te registraste:
 
 ```php
 App\Models\User::where('email', 'tu-correo@example.com')->update(['type' => 'admin']);
 ```
 
-Después de iniciar sesión de nuevo, el panel de administración estará disponible en `/administration`.
+Vuelve a iniciar sesión y abre `/administration`.
 
 ## Pruebas
 
@@ -97,14 +112,15 @@ Desde la carpeta `backend`:
 php artisan test
 ```
 
-## Estructura del proyecto
+## Estructura
 
 ```text
-backend/                              API Laravel, migraciones y almacenamiento
-frontend/                             Aplicación Angular
-ShopLaravelAngular.postman_collection.json  Colección de peticiones de la API
+backend/                                  API, migraciones y almacenamiento
+frontend/                                 Aplicación Angular
+docs/portfolio-banner.svg                 Cabecera visual de este README
+ShopLaravelAngular.postman_collection.json Colección de peticiones de la API
 ```
 
 ## Alcance
 
-La aplicación está pensada para ejecutarse en local como demostración de portfolio. SQLite y las imágenes subidas se guardan localmente y no se incluyen en Git. Para desplegarla habría que configurar el entorno, la base de datos, CORS, almacenamiento y credenciales de producción.
+Está preparado como proyecto de portfolio para desarrollo local. La base SQLite y las imágenes subidas se guardan en el equipo y se excluyen de Git. Para publicarlo como servicio habría que configurar una base de datos y almacenamiento adecuados, CORS y las variables de entorno de producción.
