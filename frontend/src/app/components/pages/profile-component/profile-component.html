@@ -1,132 +1,43 @@
 <app-container-component>
-
-    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center">
-      <div style="width: 800px; padding: 20px; border-radius: 5px">
-        <form [formGroup]="formInformation"
-            style="width: 100%; height: 100%;">
-
-        <div style="height: 100%; width: 100%; ">
-          <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px; color: white">
-            <span>Editar información personal</span>
+  <p class="profile-load-message" *ngIf="loading()" role="status">Cargando tu perfil…</p>
+  <p class="profile-load-message profile-load-error" *ngIf="!loading() && loadError()" role="alert">{{ loadError() }}</p>
+  <main class="profile-page" *ngIf="user() as profileUser">
+    <div class="profile-heading"><span>MI CUENTA</span><h1>Tu espacio,<br><em>a tu manera.</em></h1><p>Gestiona tus datos y mantén tu cuenta al día.</p></div>
+    <div class="profile-layout">
+      <section class="profile-card">
+        <form class="profile-form" [formGroup]="formInformation" (ngSubmit)="update()">
+          <div class="profile-section-heading"><div><span>01 / PERFIL</span><h2>Información personal</h2></div></div>
+          <div class="profile-avatar-row">
+            <div class="profile-avatar"><img *ngIf="selectedCoverPreview() || profileUser.images[0]" [src]="selectedCoverPreview() || getImageUrl(profileUser.images[0])" alt="Foto de perfil"><span *ngIf="!selectedCoverPreview() && !profileUser.images[0]">N</span></div>
+            <div class="profile-photo-actions"><label class="upload-photo">{{ selectedCoverPreview() ? 'Cambiar foto' : 'Elegir foto' }}<input type="file" accept="image/*" (change)="onImageChange($event)"></label><small *ngIf="selectedCoverPreview()">La vista previa se actualizará al guardar.</small></div>
+            <button *ngIf="selectedCoverPreview()" class="profile-photo-remove" type="button" (click)="removeSelectedImage()">Quitar</button>
           </div>
-          <div style="width: 100%; display: flex; justify-content: center; align-items: center">
-            <div style="width: fit-content; display: flex; justify-content: center; align-items: end">
-              <div style="width: 220px; height: 220px; overflow: hidden; border-radius: 50%; margin: 0 auto;">
-                <img src="{{ getImageUrl(user.images[0]) }}" alt="No Image"
-                     style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
-              </div>
-              <input
-                type="file"
-                accept="image/*"
-                #fileInput
-                hidden
-                (change)="onImageChange($event)"
-              />
-
-              <!-- Botón que abre el selector -->
-              <button
-                type="button"
-                (click)="fileInput.click()"
-                style="margin-left: -70px; border-radius: 50px; width:50px; height: 50px"
-              >
-                ✏️
-              </button>
-            </div>
-
+          <div class="profile-fields">
+            <label>Nombre<input formControlName="name" autocomplete="given-name"></label>
+            <label>Apellidos<input formControlName="subname" autocomplete="family-name"></label>
+            <label class="profile-wide">Correo electrónico<input formControlName="email" type="email" autocomplete="email"></label>
+            <label>Prefijo<input formControlName="prefix" autocomplete="tel-country-code"></label>
+            <label>Teléfono<input formControlName="phone" autocomplete="tel-national"></label>
           </div>
-          <div style="display: flex; flex-direction: column;">
-            <label style="color: white" class="text-primary" for="name">Nombre</label>
-            <input formControlName="name"
-                   style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 1px black solid"
-                   type="text" id="name" placeholder="Introduzca un nombre válido">
-          </div>
-
-          <div style="display: flex; flex-direction: column; margin-top: 20px">
-            <label style="color: white" class="text-primary" for="subname">Apellidos</label>
-            <input formControlName="subname"
-                   style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
-                   type="text" id="subname" placeholder="Introduzca una descripcion válida">
-          </div>
-
-          <div style="display: flex; flex-direction: column; margin-top: 20px">
-            <label style="color: white" class="text-primary" for="email">Email</label>
-            <input formControlName="email"
-                   style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
-                   type="text" id="email" placeholder="Introduzca un precio válido">
-          </div>
-
-          <div style="display: flex; flex-direction: column; margin-top: 20px;">
-            <div style="display: block; justify-content: center; align-items: center; ">
-              <div>
-                <span style="color: white">Numero de telefono</span>
-              </div>
-              <div style="display: flex; justify-content: start; align-items: start; width: 100%">
-                <div style="width: 20%; margin-right: 30px">
-                  <input formControlName="prefix"
-                         style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid; width: 100%"
-                         type="text" id="prefix" placeholder="Introduzca un precio válido">
-                </div>
-                <div style="width: 40%">
-                  <input formControlName="phone"
-                         style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid; width: 100%"
-                         type="text" id="phone" placeholder="Introduzca un precio válido">
-                </div>
-              </div>
-
-
-            </div>
-
-          </div>
-        </div>
-        <div style="width: 100%; margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
-
-          <div style="width: 100%; display: flex; justify-content: end; align-items: center">
-            <button (click)="update()"
-                    style="width: 100%; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer; height: 40px;">
-              Actualizar información
-            </button>
-          </div>
-
-        </div>
-
-      </form>
-
-      <div style="width: 100%">
-        <form [formGroup]="formPassword">
-          <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: white">
-            <span>Editar contraseña</span>
-          </div>
-
-          <div style="display: flex; flex-direction: column; margin-top: 20px">
-            <label style="color: white" class="text-primary" for="password">Contraseña</label>
-            <input formControlName="password"
-                   style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
-                   type="password" id="password" placeholder="Introduzca una contraseña válida">
-          </div>
-          <div style="display: flex; flex-direction: column; margin-top: 20px">
-            <label style="color: white" class="text-primary" for="repeatPassword">Repetir Contraseña</label>
-            <input formControlName="repeatPassword"
-                   style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
-                   type="password" id="repeatPassword" placeholder="Repita la contraseña">
-          </div>
-
-          <div style="width: 100%; display: flex; justify-content: end; align-items: center; margin-top: 20px">
-            <button (click)="changePassword()"
-                    style="width: 100%; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer; height: 40px;">
-              Cambiar Contraseña
-            </button>
-          </div>
+          <p class="profile-feedback profile-feedback-error" *ngIf="profileError()" role="alert">{{ profileError() }}</p>
+          <p class="profile-feedback profile-feedback-success" *ngIf="profileMessage()" role="status">{{ profileMessage() }}</p>
+          <button class="profile-submit" type="submit" [disabled]="formInformation.invalid || savingProfile()">{{ savingProfile() ? 'Guardando…' : 'Guardar cambios' }} <span>↗</span></button>
         </form>
-      </div>
 
+        <form class="profile-form password-form" [formGroup]="formPassword" (ngSubmit)="changePassword()">
+          <div class="profile-section-heading"><div><span>02 / SEGURIDAD</span><h2>Cambiar contraseña</h2></div></div>
+          <div class="profile-fields">
+            <label>Nueva contraseña<input formControlName="password" type="password" autocomplete="new-password" placeholder="Al menos 6 caracteres"></label>
+            <label>Repetir contraseña<input formControlName="repeatPassword" type="password" autocomplete="new-password" placeholder="Repite la contraseña"></label>
+          </div>
+          <p class="profile-feedback profile-feedback-error" *ngIf="passwordError()" role="alert">{{ passwordError() }}</p>
+          <p class="profile-feedback profile-feedback-success" *ngIf="passwordMessage()" role="status">{{ passwordMessage() }}</p>
+          <button class="profile-submit" type="submit" [disabled]="formPassword.invalid || savingPassword()">{{ savingPassword() ? 'Actualizando…' : 'Actualizar contraseña' }} <span>↗</span></button>
+        </form>
+        <button class="profile-logout" type="button" (click)="logout()">Cerrar sesión</button>
+      </section>
 
-
-      <button (click)="logout()"
-              style="cursor: pointer;width: 100%; background-color: red; color: var(--text-inverted); border-radius: 10px; margin-top: 20px; border: 1px red solid; height: 40px; padding: 8px 16px; color: white">
-        Cerrar sesión
-      </button>
+      <aside class="profile-art"><span>TODO EN SU SITIO</span><div class="profile-art-mark">✳</div><h2>Lo mejor<br>está por<br><em>llegar.</em></h2><p>Tu cuenta guarda tus pedidos y tus próximos favoritos.</p></aside>
     </div>
-  </div>
-
-
+  </main>
 </app-container-component>

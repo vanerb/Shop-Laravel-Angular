@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, signal} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Images} from '../../../interfaces/products';
 import {User} from '../../../interfaces/users';
@@ -12,20 +12,34 @@ import {getImageUrl} from '../../../helpers/utilities.helper';
   templateUrl: './profile-component.html',
   styleUrl: './profile-component.css'
 })
-export class ProfileComponent implements OnInit{
+export class ProfileComponent implements OnInit, OnDestroy{
   formInformation!: FormGroup
   formPassword!: FormGroup
-  user!:User
-  selectedImagesCover: File[] = [];
-  existingCoverImage: Images | null = null;
-  deletedCoverImage: boolean = false;
+  readonly user = signal<User | null>(null);
+  readonly loading = signal(true);
+  readonly loadError = signal('');
+  readonly profileMessage = signal('');
+  readonly profileError = signal('');
+  readonly passwordMessage = signal('');
+  readonly passwordError = signal('');
+  readonly savingProfile = signal(false);
+  readonly savingPassword = signal(false);
+  readonly selectedImagesCover = signal<File[]>([]);
+  readonly selectedCoverPreview = signal<string | null>(null);
+  readonly existingCoverImage = signal<Images | null>(null);
+  readonly deletedCoverImage = signal(false);
 
-  constructor( private authService: AuthService, private cd: ChangeDetectorRef,private fb: FormBuilder, private usersService: UsersService) {
+  ngOnDestroy(): void {
+    const preview = this.selectedCoverPreview();
+    if (preview) URL.revokeObjectURL(preview);
+  }
+
+  constructor( private authService: AuthService,private fb: FormBuilder, private usersService: UsersService) {
 
     this.formInformation = this.fb.group({
       name: ['', [Validators.required]],
       subname: ['', [Validators.required]],
-      email: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
       prefix: ['', [Validators.required]],
       phone: ['', [Validators.required]],
       password: [''],
@@ -34,7 +48,7 @@ export class ProfileComponent implements OnInit{
     });
 
     this.formPassword = this.fb.group({
-      password: ['', [Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
       repeatPassword: ['', [Validators.required]],
     });
 
@@ -43,30 +57,23 @@ export class ProfileComponent implements OnInit{
   ngOnInit() {
     this.authService.getUserByToken().subscribe({
       next: async (user:User) => {
-       this.user = user;
+       this.user.set(user);
+       this.loading.set(false);
+       this.existingCoverImage.set(user.images?.find(image => image.from === 'profile_image') ?? null);
         this.formInformation.patchValue({
-          name: this.user?.name || '',
-          subname: this.user.subname || '',
-          email: this.user?.email || '',
-          prefix: this.user?.prefix || '',
-          phone: this.user?.phone || '',
-          type: this.user?.type || ''
+          name: user.name || '',
+          subname: user.subname || '',
+          email: user.email || '',
+          prefix: user.prefix || '',
+          phone: user.phone || '',
+          type: user.type || ''
         });
-       this.cd.detectChanges();
       },
       error: (err) => {
-
+        this.loading.set(false);
+        this.loadError.set(err?.error?.message ?? 'No se pudieron cargar tus datos. Comprueba tu conexión e inténtalo de nuevo.');
       }
     });
-
-    // Separar imágenes existentes
-    if (this.user?.images?.length) {
-      for (const el of this.user.images) {
-        if (el.from === 'profile_image') {
-          this.existingCoverImage = el;
-        }
-      }
-    }
 
 
   }
@@ -83,39 +90,47 @@ export class ProfileComponent implements OnInit{
   }
 
   changePassword(){
-    if( this.formPassword.get('password')?.value !== '' && this.formPassword.get('repeatPassword')?.value !== '' ){
-      if( this.formPassword.get('password')?.value === this.formPassword.get('repeatPassword')?.value){
-        const formData = new FormData();
-
-        formData.append('password', this.formPassword.get('password')?.value);
-        formData.append('repeatPassword', this.formPassword.get('repeatPassword')?.value);
-
-        this.authService.changePassword(this.user.id, formData).subscribe({
-          next: async () => {
-            this.authService.getUserByToken().subscribe({
-              next: async (user:User) => {
-                this.user = user;
-                this.cd.detectChanges();
-              },
-              error: (err) => {
-
-              }
-            });
-          },
-          error: (err) => {
-
-          }
-        });
-      }
+    this.passwordError.set('');
+    this.passwordMessage.set('');
+    if (this.formPassword.invalid) {
+      this.formPassword.markAllAsTouched();
+      this.passwordError.set('La contraseña debe tener al menos 6 caracteres.');
+      return;
     }
+    if (this.formPassword.value.password !== this.formPassword.value.repeatPassword) {
+      this.passwordError.set('Las contraseñas no coinciden.');
+      return;
+    }
+    const user = this.user();
+    if (!user || this.savingPassword()) return;
 
-
-
+    const formData = new FormData();
+    formData.append('password', this.formPassword.value.password);
+    formData.append('repeatPassword', this.formPassword.value.repeatPassword);
+    this.savingPassword.set(true);
+    this.authService.changePassword(user.id, formData).subscribe({
+      next: () => {
+        this.savingPassword.set(false);
+        this.passwordMessage.set('Contraseña actualizada correctamente.');
+        this.formPassword.reset();
+      },
+      error: err => {
+        this.savingPassword.set(false);
+        this.passwordError.set(this.validationMessage(err, 'No se pudo actualizar la contraseña.'));
+      }
+    });
   }
 
   update(){
-    console.log("CLICLK", this.formInformation.value)
-    if (this.formInformation.valid) {
+    this.profileError.set('');
+    this.profileMessage.set('');
+    if (this.formInformation.invalid) {
+      this.formInformation.markAllAsTouched();
+      this.profileError.set('Revisa los datos del perfil e inténtalo de nuevo.');
+      return;
+    }
+    const user = this.user();
+    if (user && !this.savingProfile()) {
       const formData = new FormData();
 
       formData.append('name', this.formInformation.get('name')?.value);
@@ -126,35 +141,50 @@ export class ProfileComponent implements OnInit{
       formData.append('password', this.formInformation.get('password')?.value);
       formData.append('type', this.formInformation.get('type')?.value);
 
-      if (this.selectedImagesCover.length > 0) {
-        formData.append('profile_photo', this.selectedImagesCover[0], this.selectedImagesCover[0].name);
+      if (this.selectedImagesCover().length > 0) {
+        formData.append('profile_photo', this.selectedImagesCover()[0], this.selectedImagesCover()[0].name);
       }
 
-      if (this.existingCoverImage) {
-        formData.append('existing_profile_photo', this.existingCoverImage.id.toString());
+      const existingCover = this.existingCoverImage();
+      if (existingCover) {
+        formData.append('existing_profile_photo', existingCover.id.toString());
       }
 
-      if (this.deletedCoverImage) {
+      if (this.deletedCoverImage()) {
         formData.append('deleted_profile_photo', '1');
       }
 
-      this.usersService.update(this.user.id, formData).subscribe({
-        next: async () => {
+      this.savingProfile.set(true);
+      this.usersService.update(user.id, formData).subscribe({
+        next: () => {
+          this.savingProfile.set(false);
+          this.profileMessage.set('Perfil actualizado correctamente.');
           this.authService.getUserByToken().subscribe({
-            next: async (user:User) => {
-              this.user = user;
-              this.cd.detectChanges();
+            next: (user:User) => {
+              this.user.set(user);
+              this.existingCoverImage.set(user.images?.find(image => image.from === 'profile_image') ?? null);
+              this.selectedImagesCover.set([]);
+              const preview = this.selectedCoverPreview();
+              if (preview) URL.revokeObjectURL(preview);
+              this.selectedCoverPreview.set(null);
+              this.deletedCoverImage.set(false);
             },
-            error: (err) => {
-
+            error: err => {
+              this.profileError.set(this.validationMessage(err, 'Los cambios se guardaron, pero no se pudo recargar el perfil.'));
             }
           });
         },
-        error: (err) => {
-
+        error: err => {
+          this.savingProfile.set(false);
+          this.profileError.set(this.validationMessage(err, 'No se pudieron guardar los cambios.'));
         }
       });
     }
+  }
+
+  private validationMessage(error: any, fallback: string): string {
+    const errors = error?.error?.errors as Record<string, string[]> | undefined;
+    return errors ? Object.values(errors).flat().join(' ') : error?.error?.message ?? fallback;
   }
 
 
@@ -162,13 +192,25 @@ export class ProfileComponent implements OnInit{
   onImageChange(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
-      this.selectedImagesCover = [input.files[0]]; // reemplaza la anterior
-      if (this.existingCoverImage) {
-        this.deletedCoverImage = true; // marcar portada existente como borrada
-        this.existingCoverImage = null;
+      const file = input.files[0];
+      const preview = this.selectedCoverPreview();
+      if (preview) URL.revokeObjectURL(preview);
+      this.selectedImagesCover.set([file]);
+      this.selectedCoverPreview.set(URL.createObjectURL(file));
+      if (this.existingCoverImage()) {
+        this.deletedCoverImage.set(true);
+        this.existingCoverImage.set(null);
       }
+      input.value = '';
     }
+  }
 
-    this.update()
+  removeSelectedImage(): void {
+    const preview = this.selectedCoverPreview();
+    if (preview) URL.revokeObjectURL(preview);
+    this.selectedCoverPreview.set(null);
+    this.selectedImagesCover.set([]);
+    this.deletedCoverImage.set(false);
+    this.existingCoverImage.set(this.user()?.images?.find(image => image.from === 'profile_image') ?? null);
   }
 }

@@ -16,8 +16,6 @@ export interface Order {
 
 export interface CreateOrder {
   "basket_id": number,
-  "total": string,
-  "status":string,
   "name": string,
   "email": string,
   "direction": string,

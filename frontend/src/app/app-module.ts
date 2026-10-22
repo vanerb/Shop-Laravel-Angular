@@ -27,8 +27,8 @@ import { ProcessOrderComponent } from './components/pages/process-order-componen
 import { ProfileComponent } from './components/pages/profile-component/profile-component';
 import { RegisterComponent } from './components/pages/register-component/register-component';
 import { ShopComponent } from './components/pages/shop-component/shop-component';
-import { HttpClientModule } from '@angular/common/http';
-import {ReactiveFormsModule} from '@angular/forms';
+import {provideHttpClient, withFetch, withInterceptors} from '@angular/common/http';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {
   AddProductModalComponent
 } from './components/pages/manage-products-component/add-product-modal-component/add-product-modal-component';
@@ -41,6 +41,9 @@ import { ConfirmationModalComponent } from './components/pages/general/confirmat
 import { DetailComponent } from './components/pages/detail-component/detail-component';
 import { EditUserComponent } from './components/pages/manage-users-component/edit-user-component/edit-user-component';
 import { AddUserComponent } from './components/pages/manage-users-component/add-user-component/add-user-component';
+import { PaginationComponent } from './components/pages/general/pagination-component/pagination-component';
+import { LoadingModalComponent } from './components/pages/general/loading-modal-component/loading-modal-component';
+import { loadingInterceptor } from './services/loading-interceptor';
 
 @NgModule({
   declarations: [
@@ -76,15 +79,18 @@ import { AddUserComponent } from './components/pages/manage-users-component/add-
     ConfirmationModalComponent,
     DetailComponent,
     EditUserComponent,
-    AddUserComponent
+    AddUserComponent,
+    PaginationComponent,
+    LoadingModalComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule,
+    FormsModule,
     ReactiveFormsModule,
   ],
   providers: [
+    provideHttpClient(withFetch(), withInterceptors([loadingInterceptor])),
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideClientHydration(withEventReplay())

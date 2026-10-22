@@ -1,23 +1,13 @@
 <app-container-component>
-  <div style="display: flex; flex-direction: column; justify-content: center; align-items: center">
-    <div style="width: 800px">
-      <div style="width: 100%; height: calc(100vh - 160px); overflow: auto">
-        <div *ngFor="let product of basket.products" >
-          <app-basket-card-component viewMode="editable" [product]="product" (remove)="removeProductBasket($event)"></app-basket-card-component>
-        </div>
-
-        <div style="margin-top: 20px; color: white">
-          <span>Subtotal: {{ calculateTotal() }} €</span>
-        </div>
+  <div class="basket-page">
+    <div class="basket-heading"><span>MI SELECCIÓN</span><h1>Tu cesta<span>.</span></h1></div>
+    <div class="basket-layout" *ngIf="basket().products.length; else emptyBasket">
+      <div class="basket-items">
+        <app-basket-card-component *ngFor="let product of paginatedProducts()" viewMode="editable" [product]="product" (remove)="removeProductBasket($event)"></app-basket-card-component>
+        <app-pagination [totalItems]="basket().products.length" [pageSize]="pageSize" [currentPage]="page()" (pageChange)="page.set($event)"></app-pagination>
       </div>
-
-      <div>
-        <button (click)="goToProcess()" style="width: 100%; height: 40px; background-color: #0f5132; border-radius: 10px; border: 1px #0f5132 solid; margin-top: 20px; color: white; cursor: pointer">
-          Tramitar pedido
-        </button>
-      </div>
+      <aside class="basket-total"><span>Subtotal</span><strong>{{ calculateTotal() }} €</strong><small>Los gastos de envío se calculan al completar el pedido.</small><button type="button" (click)="goToProcess()">Continuar al pago <span>↗</span></button></aside>
     </div>
+    <ng-template #emptyBasket><div class="basket-empty"><span>＋</span><h2>Tu cesta está esperando.</h2><p>Explora la tienda y guarda aquí lo que te guste.</p><a routerLink="/shop">Descubrir la tienda ↗</a></div></ng-template>
   </div>
-
-
 </app-container-component>

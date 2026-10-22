@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import {Category} from '../interfaces/categories';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {AuthService} from './auth-service';
+import {API_BASE_URL} from './api-base-url';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategoriesService {
-  baseUrl: string = 'http://localhost:8000/api/';
+  baseUrl = API_BASE_URL;
 
   constructor(private http: HttpClient, private readonly authService: AuthService) {
   }
@@ -38,3 +39,4 @@ export class CategoriesService {
     return  this.http.delete(this.baseUrl + 'categories/'+id, { headers });
   }
 }
+

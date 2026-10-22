@@ -56,32 +56,20 @@
       </div>
       <div style="display: flex; flex-direction: column; margin-top: 20px">
         <label class="text-primary" for="type">Tipo</label>
-        <input formControlName="type"
-               style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid"
-               type="text" id="type" placeholder="Introduzca un precio válido">
+        <select formControlName="type" id="type">
+          <option value="user">Cliente</option>
+          <option value="admin">Administrador</option>
+        </select>
       </div>
 
-      <div style="display: flex; flex-direction: column; margin-top: 20px">
-        <label class="text-primary" for="profile_photo">Imagen perfil</label>
-        <input formControlName="profile_photo" (change)="onImageChange($event)" accept="image/*"
-               style="padding: 8px; margin-top: 8px; border-radius: 5px; border:0px black solid"
-               type="file" id="profile_photo">
-      </div>
-
-      <div>
-        <p>Imágenes de items seleccionadas:</p>
-        <div style="display: flex; justify-content: start; align-items: start">
-          <div style="margin-right: 10px" *ngFor="let img of user?.images; let i = index">
-
-            <img width="100" height="100" src="{{ getImageUrl(img) }}">
-            <div style="width: 100%; text-align: center" *ngIf="img?.from === 'cover'">
-              <span style="width: 100%;">Portada</span>
-            </div>
-          </div>
+      <section class="image-upload-section">
+        <div class="image-upload-heading"><div><label for="profile_photo">Foto de perfil</label><small>Previsualiza la foto antes de guardar los cambios</small></div><span>PERFIL</span></div>
+        <div class="account-image-picker">
+          <div class="account-image-preview"><img *ngIf="selectedCoverPreview() || existingCoverImage()" [src]="selectedCoverPreview() || getImageUrl(existingCoverImage()!)" alt="Vista previa del perfil"><span *ngIf="!selectedCoverPreview() && !existingCoverImage()">N</span></div>
+          <label class="image-dropzone" for="profile_photo"><span class="image-dropzone-icon">＋</span><span class="image-dropzone-copy"><strong>{{ selectedCoverPreview() ? 'Cambiar fotografía' : 'Seleccionar fotografía' }}</strong><small>JPG, PNG o WEBP · La vista previa se actualiza al elegirla</small></span><input (change)="onImageChange($event)" accept="image/*" type="file" id="profile_photo"></label>
         </div>
-
-
-      </div>
+        <button *ngIf="selectedCoverPreview()" class="image-preview-remove account-image-remove" type="button" (click)="removeSelectedImage()" aria-label="Quitar nueva fotografía">×</button>
+      </section>
 
       <div style="display: flex; justify-content: end; align-items: end; margin-top: 20px">
         <button (click)="close()" style="border-radius: 10px; border: 1px #0f5132 solid; padding-right: 16px; padding-left: 16px; height: 40px; margin-right: 10px; color: black; cursor: pointer">Cancelar</button>

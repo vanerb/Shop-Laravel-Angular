@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, signal} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Category} from '../../../../interfaces/categories';
 import {CategoriesService} from '../../../../services/categories-service';
@@ -9,16 +9,24 @@ import {CategoriesService} from '../../../../services/categories-service';
   templateUrl: './add-product-modal-component.html',
   styleUrl: './add-product-modal-component.css'
 })
-export class AddProductModalComponent implements OnInit, AfterViewInit{
+export class AddProductModalComponent implements OnDestroy {
 
   form!: FormGroup;
 
-  categories: Category[] = []
+  readonly categories = signal<Category[]>([]);
+  readonly coverPreview = signal<{ file: File; url: string } | null>(null);
+  readonly galleryPreviews = signal<{ file: File; url: string }[]>([]);
 
   confirm!: (result?: any) => void;
   close!: () => void;
 
-  constructor(private fb: FormBuilder, private  readonly categoriesService: CategoriesService, private cd: ChangeDetectorRef) {
+  ngOnDestroy(): void {
+    const cover = this.coverPreview();
+    if (cover) URL.revokeObjectURL(cover.url);
+    this.galleryPreviews().forEach(preview => URL.revokeObjectURL(preview.url));
+  }
+
+  constructor(private fb: FormBuilder, private readonly categoriesService: CategoriesService) {
 
     this.form = this.fb.group({
       name: ['', [Validators.required]],
@@ -33,14 +41,9 @@ export class AddProductModalComponent implements OnInit, AfterViewInit{
   }
 
   ngOnInit() {
-
-  }
-
-  ngAfterViewInit() {
     this.categoriesService.getAllCategoriesByUser().subscribe({
       next: (categories: Category[]) => {
-        this.categories = [...categories]; // forzar nueva referencia
-        this.cd.detectChanges();
+        this.categories.set(categories);
       },
       error: (err) => console.error("Error al cargar productos", err)
     });
@@ -51,6 +54,9 @@ export class AddProductModalComponent implements OnInit, AfterViewInit{
     const file = input.files?.[0];
     if (file) {
       this.form.get('cover_image')?.setValue(file);
+      const previous = this.coverPreview();
+      if (previous) URL.revokeObjectURL(previous.url);
+      this.coverPreview.set({ file, url: URL.createObjectURL(file) });
     }
   }
 
@@ -59,8 +65,26 @@ export class AddProductModalComponent implements OnInit, AfterViewInit{
     const files = input.files;
     if (files && files.length > 0) {
       const fileArray = Array.from(files);
-      this.form.get('images')?.setValue(fileArray);
+      this.galleryPreviews.update(previews => [...previews, ...fileArray.map(file => ({ file, url: URL.createObjectURL(file) }))]);
+      this.form.get('images')?.setValue(this.galleryPreviews().map(preview => preview.file));
+      input.value = '';
     }
+  }
+
+  removeCoverPreview(): void {
+    const preview = this.coverPreview();
+    if (preview) URL.revokeObjectURL(preview.url);
+    this.coverPreview.set(null);
+    this.form.get('cover_image')?.setValue(null);
+  }
+
+  removeGalleryPreview(file: File): void {
+    this.galleryPreviews.update(previews => {
+      const removed = previews.find(preview => preview.file === file);
+      if (removed) URL.revokeObjectURL(removed.url);
+      return previews.filter(preview => preview.file !== file);
+    });
+    this.form.get('images')?.setValue(this.galleryPreviews().map(preview => preview.file));
   }
 
 

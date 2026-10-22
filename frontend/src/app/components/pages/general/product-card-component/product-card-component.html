@@ -1,57 +1,16 @@
-<div (click)="openDetails(item); $event.stopPropagation()" style="
-  background: #eee; cursor: pointer;
-  padding: 1rem;
-  border-radius: 10px;
-  height: 500px;       /* altura fija mayor */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-">
-  <div style="width: 100%; flex: 0 0 60%; overflow: hidden;">
-    <img  src="{{ getImageUrl(item) }}" alt="No Image"
-         style="width: auto; height: 100%; display: block; margin: 0 auto; object-fit: contain; object-position: center;">
+<article class="product-card" (click)="openDetails(item())" tabindex="0" (keydown.enter)="openDetails(item())" [attr.aria-label]="'Ver ' + item()?.name">
+  <div class="product-image">
+    <img [src]="getImageUrl(item())" [alt]="item()?.name || 'Producto de la tienda'" loading="lazy">
+    <span class="image-index">{{ item()?.category?.name || 'NATIVA' }}</span>
+    <button class="quick-view" type="button" (click)="openDetails(item()); $event.stopPropagation()" [attr.aria-label]="'Ver detalles de ' + item()?.name">↗</button>
   </div>
-
-  <div style="text-align: center; width: 100%; flex: 0 0 auto; ">
-    <p>{{ item?.name }}</p>
+  <div class="product-info">
+    <span class="product-category">{{ item()?.category?.name || 'SELECCIÓN NATIVA' }}</span>
+    <h3>{{ item()?.name }}</h3>
+    <p>{{ item()?.description }}</p>
+    <div class="product-bottom">
+      <span class="product-price">{{ item()?.price }} <small>€</small></span>
+      <button class="add-button" type="button" (click)="addProductBasket(item()); $event.stopPropagation()" aria-label="Agregar al carrito">+</button>
+    </div>
   </div>
-
-  <div style="width: 100%; flex: 0 0 auto; display: flex; align-items: center; justify-content: center">
-    <p style="
-
-      display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.2em;
-  max-height: calc(1.2em * 1);
-  word-break: break-word;       /* rompe palabras largas */
-  overflow-wrap: break-word;    /* soporte adicional */
-    ">
-      {{ item?.description}}
-    </p>
-  </div>
-
-  <div style="width: 100%; flex: 0 0 auto; display: flex; align-items: center; justify-content: center">
-    <p style="
-
-      display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.2em;
-  max-height: calc(1.2em * 3);
-  word-break: break-word;       /* rompe palabras largas */
-  overflow-wrap: break-word;    /* soporte adicional */
-    ">
-      {{ item?.price}} €
-    </p>
-  </div>
-
-
-  <div>
-    <button (click)="addProductBasket(item);$event.stopPropagation()" style="width: 100%; height: 40px; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer">Agregar al carrito</button>
-  </div>
-</div>
+</article>

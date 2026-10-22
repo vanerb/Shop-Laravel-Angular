@@ -20,6 +20,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'subname',
         'email',
         'password',
         'prefix',
@@ -34,6 +35,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
+        'token',
         'remember_token',
     ];
 
@@ -47,6 +49,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'active' => 'boolean',
         ];
     }
 
@@ -77,7 +80,7 @@ public function images()
 
 public function profileImage()
 {
-    return $this->morphOne(Image::class, 'imageable')->where('from', 'profile_photo');
+    return $this->morphOne(Image::class, 'imageable')->where('from', 'profile_image');
 }
 
 }

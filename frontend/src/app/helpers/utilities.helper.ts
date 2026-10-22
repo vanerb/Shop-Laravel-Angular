@@ -1,5 +1,6 @@
 // src/app/helpers/api.helper.ts
 import {Images, Product} from '../interfaces/products';
+import {API_ORIGIN} from '../services/api-base-url';
 
 export function sleep(ms: number | undefined) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -30,7 +31,12 @@ export function calculateTotal(items: Product[]){
 }
 
 export function getImageUrl(image: Images | undefined) {
-  return image ? `http://localhost:8000/image/${image.path.replace(/^images\//, '')}` : 'http://localhost:8000/storage/general/no_image.jpg';
+  return image ? `${API_ORIGIN}/image/${image.path.replace(/^images\//, '')}` : '/assets/product-placeholder.svg';
+}
+
+export function getProductCoverImage(images: Images[] | undefined): Images | undefined {
+  if (!images?.length) return undefined;
+  return images.find(image => image.from === 'cover') ?? [...images].sort((a, b) => a.id - b.id)[0];
 }
 
 

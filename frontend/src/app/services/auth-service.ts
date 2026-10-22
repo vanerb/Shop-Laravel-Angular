@@ -1,15 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import {ChangePassword, Login, Token} from '../interfaces/auth';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Router} from '@angular/router';
-import {CreateUser, User} from '../interfaces/users';
-import {Category} from '../interfaces/categories';
+import {API_BASE_URL} from './api-base-url';
+import {User} from '../interfaces/users';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  base = 'http://127.0.0.1:8000/api'
+  base = API_BASE_URL.replace(/\/$/, '')
+  readonly loginError = signal('');
 
 
   constructor(private http: HttpClient, private readonly router: Router) {
@@ -52,23 +53,23 @@ export class AuthService {
   }
 
   login(login: Login) {
+    this.loginError.set('');
     this.http.post<Token>(this.base + '/login', login).subscribe({
       next: async (token: Token) => {
         this.setToken(token.access_token);
         this.setType(token.type)
         await this.router.navigate(['/shop']);
-        window.location.reload()
 
       },
       error: (err) => {
-
+        this.loginError.set(err?.error?.errors?.email?.[0] ?? err?.error?.message ?? 'No se pudo iniciar sesión. Comprueba tus datos e inténtalo de nuevo.');
       }
     });
 
   }
 
   register(user: FormData) {
-    return this.http.post<Token>(this.base + '/register', user)
+    return this.http.post<{user: User}>(this.base + '/register', user)
   }
 
   changePassword(id: number, data: FormData){
@@ -81,8 +82,14 @@ export class AuthService {
   }
 
   logout() {
+    const token = this.getToken();
+    if (token) {
+      const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+      this.http.post(`${this.base}/logout`, {}, {headers}).subscribe({error: () => {}});
+    }
     localStorage.removeItem('token');
     this.deleteType()
     this.router.navigate(['/login'])
   }
 }
+

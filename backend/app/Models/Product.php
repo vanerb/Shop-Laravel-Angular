@@ -20,7 +20,7 @@ class Product extends Model
              // Relación polimórfica
              public function images()
              {
-                 return $this->morphMany(Image::class, 'imageable');
+                 return $this->morphMany(Image::class, 'imageable')->orderBy('id');
              }
 
              public function coverImage()

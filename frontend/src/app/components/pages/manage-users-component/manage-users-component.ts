@@ -1,8 +1,7 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {Component, computed, OnInit, signal} from '@angular/core';
 import {User} from '../../../interfaces/users';
 import {UsersService} from '../../../services/users-service';
 import {ModalService} from '../../../services/modal-service';
-import {AuthService} from '../../../services/auth-service';
 import {AddUserComponent} from './add-user-component/add-user-component';
 import {EditUserComponent} from './edit-user-component/edit-user-component';
 import {ConfirmationModalComponent} from '../general/confirmation-modal-component/confirmation-modal-component';
@@ -16,18 +15,30 @@ import {getImageUrl, transformDate} from '../../../helpers/utilities.helper';
 })
 export class ManageUsersComponent implements OnInit {
 
-  users: User[] = []
+  readonly users = signal<User[]>([]);
+  readonly notice = signal('');
+  readonly page = signal(1);
+  readonly pageSize = 12;
+  readonly paginatedUsers = computed(() => {
+    const start = (this.page() - 1) * this.pageSize;
+    return this.users().slice(start, start + this.pageSize);
+  });
 
-  constructor( private readonly usersService: UsersService,private cd: ChangeDetectorRef, private readonly modalService: ModalService, private readonly authService: AuthService) {
+  constructor( private readonly usersService: UsersService, private readonly modalService: ModalService) {
   }
 
   ngOnInit() {
+    this.loadUsers();
+  }
+
+  private loadUsers(): void {
     this.usersService.getAllUsers().subscribe({
-      next: async (users: User[]) => {
-        this.users = users
-        this.cd.detectChanges();
+      next: (users: User[]) => {
+        this.users.set(users);
+        this.page.set(1);
+        this.notice.set('');
       },
-      error: err => console.error("Error al cargar productos", err)
+      error: () => { this.notice.set('No se pudieron cargar los usuarios. Inténtalo de nuevo.'); }
     });
   }
 
@@ -39,21 +50,12 @@ export class ManageUsersComponent implements OnInit {
       { user: user }).then(async (item: FormData) => {
 
 
-      console.log("CLIKC")
-
       this.usersService.update(user.id, item).subscribe({
         next: async () => {
-          this.usersService.getAllUsers().subscribe({
-            next: async (users: User[]) => {
-              this.users = users
-              this.cd.detectChanges();
-            },
-            error: err => console.error("Error al cargar productos", err)
-          });
+          this.notice.set('Usuario actualizado correctamente.');
+          this.loadUsers();
         },
-        error: (err) => {
-
-        }
+        error: () => { this.notice.set('No se pudo actualizar el usuario. Revisa los datos e inténtalo de nuevo.'); }
       });
 
 
@@ -71,17 +73,11 @@ export class ManageUsersComponent implements OnInit {
       { title: 'Eliminar', message: '¿Está seguro de que quiere eliminar el elemento '+user.email+"?" }).then(async (item: FormData) => {
       this.usersService.delete(user.id).subscribe({
         next: () => {
-          this.usersService.getAllUsers().subscribe({
-            next: async (users: User[]) => {
-              this.users = users
-              this.cd.detectChanges();
-            },
-            error: err => console.error("Error al cargar productos", err)
-          });
+          this.users.update(users => users.filter(item => item.id !== user.id));
+          this.page.update(page => Math.min(page, Math.max(1, Math.ceil(this.users().length / this.pageSize))));
+          this.notice.set('Usuario eliminado correctamente.');
         },
-        error: (err) => {
-
-        }
+        error: () => { this.notice.set('No se pudo eliminar el usuario.'); }
       });
     })
       .catch(() => {
@@ -96,19 +92,12 @@ export class ManageUsersComponent implements OnInit {
       },
       {}).then(async (item: FormData) => {
 
-      this.authService.register(item).subscribe({
+      this.usersService.create(item).subscribe({
         next: async () => {
-          this.usersService.getAllUsers().subscribe({
-            next: async (users: User[]) => {
-              this.users = users
-              this.cd.detectChanges();
-            },
-            error: err => console.error("Error al cargar productos", err)
-          });
+          this.notice.set('Usuario creado correctamente.');
+          this.loadUsers();
         },
-        error: (err) => {
-
-        }
+        error: () => { this.notice.set('No se pudo crear el usuario. Comprueba el correo y los datos del formulario.'); }
       });
 
 
@@ -119,7 +108,7 @@ export class ManageUsersComponent implements OnInit {
   }
 
   getImageUrl(item: User | undefined): string {
-   return getImageUrl(item?.images[0])
+   return getImageUrl(item?.images?.[0])
   }
 
   getDates(date: string){

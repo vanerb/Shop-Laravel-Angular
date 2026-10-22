@@ -1,0 +1,44 @@
+:host{display:block}
+.checkout-page{min-height:calc(100vh - 77px);padding:42px 24px 76px;background:#f5f6f3;color:#1c2921}
+.checkout-shell{width:min(1080px,100%);margin:auto}
+.back-link{color:#68756c;text-decoration:none;font-size:12px;font-weight:600;transition:color .2s}
+.back-link:hover{color:#6458f5}
+.checkout-heading{margin:36px 0 29px;animation:checkout-rise .45s both}
+.checkout-heading>span{color:#6458f5;font-size:9px;font-weight:800;letter-spacing:.17em}
+.checkout-heading h1{margin:10px 0 8px;color:#19261e;font-size:clamp(38px,6vw,56px);font-weight:800;letter-spacing:-.07em;line-height:1}
+.checkout-heading em{color:#6458f5;font-style:normal}
+.checkout-heading p{margin:0;color:#78837b;font-size:13px}
+.checkout-layout{display:grid;grid-template-columns:1.2fr .8fr;align-items:start;gap:19px}
+.checkout-form,.order-summary{padding:25px;border:1px solid #e4e8e2;border-radius:10px;background:#fff;box-shadow:0 8px 24px #19261e08;animation:checkout-rise .55s both}
+.checkout-form h2,.summary-title h2{margin:0;color:#26352b;font-size:16px;font-weight:750;letter-spacing:-.025em}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:22px}
+.form-grid label{display:grid;gap:8px;color:#58645c;font-size:10px;font-weight:700}
+.form-grid .full-width{grid-column:1/-1}
+.form-grid input{width:100%;min-height:44px;padding:11px 12px;border:1px solid #e0e5df;border-radius:6px;background:#fbfcfa;color:#202e25;font:inherit;font-size:12px;transition:border .2s,box-shadow .2s}
+.form-grid input::placeholder{color:#a5ada6}
+.form-grid input:focus{border-color:#8f86ff;box-shadow:0 0 0 3px #6458f51b;outline:none}
+.checkout-error{margin:15px 0 0;color:#b14444;font-size:12px}
+.place-order{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:48px;margin-top:22px;padding:0 16px;border:0;border-radius:6px;background:#6458f5;color:#fff;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 8px 18px #6458f530;transition:transform .2s,background .2s,box-shadow .2s}
+.place-order:hover:not(:disabled){transform:translateY(-2px);background:#5145e4;box-shadow:0 12px 23px #6458f544}
+.place-order:disabled{cursor:not-allowed;opacity:.55}
+.place-order span{color:#d9ff92;font-size:18px}
+.secure-note{display:block;margin-top:14px;color:#929b94;font-size:9px;line-height:1.5}
+.secure-note span{margin-right:4px;color:#6458f5}
+.order-summary{padding:22px}
+.summary-title{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid #edf0ec}
+.summary-title span{color:#929b94;font-size:10px}
+.summary-items{display:grid}
+.summary-item{display:grid;grid-template-columns:54px 1fr auto;align-items:center;gap:11px;padding:14px 0;border-bottom:1px solid #edf0ec}
+.summary-image{display:grid;width:54px;height:54px;place-items:center;overflow:hidden;border-radius:6px;background:#f0efff}
+.summary-image img{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
+.summary-product{display:grid;gap:5px;min-width:0}
+.summary-product b{overflow:hidden;color:#2a382f;font-size:11px;text-overflow:ellipsis;white-space:nowrap}
+.summary-product span{color:#8b958d;font-size:10px}
+.summary-item>strong{color:#38463d;font-size:10px}
+.summary-total{display:flex;align-items:center;justify-content:space-between;padding-top:17px;color:#566259;font-size:12px}
+.summary-total strong{color:#19261e;font-size:19px;font-weight:800;letter-spacing:-.04em}
+.empty-summary{padding:24px 0;color:#838e86;font-size:12px}
+@keyframes checkout-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:720px){.checkout-page{padding:28px 18px 52px}.checkout-heading{margin:28px 0 21px}.checkout-layout{grid-template-columns:1fr}.checkout-form,.order-summary{padding:19px}.order-summary{order:-1}}
+@media(max-width:390px){.form-grid{grid-template-columns:1fr}.form-grid .full-width{grid-column:auto}.checkout-page{padding-right:14px;padding-left:14px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}

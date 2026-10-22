@@ -16,6 +16,7 @@ return new class extends Migration
                        $table->unsignedBigInteger('basket_id');
                        $table->unsignedBigInteger('product_id');
                        $table->integer('quantity')->default(1);
+                       $table->unique(['basket_id', 'product_id']);
 
                        $table->foreign('basket_id')->references('id')->on('baskets')->onDelete('cascade');
                        $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('backet_product');
+        Schema::dropIfExists('basket_product');
     }
 };

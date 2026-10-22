@@ -1,0 +1,43 @@
+:host{display:block}
+.profile-page{width:min(1030px,100%);margin:auto;padding:14px 0 38px;color:#1c2921}
+.profile-load-message{width:min(1030px,100%);margin:16px auto;padding:24px;border:1px solid #e2e7e1;border-radius:8px;background:#fff;color:#57645b;text-align:center;font-size:12px}
+.profile-load-error{color:#a64242}
+.profile-heading{margin:0 0 26px}
+.profile-heading>span,.profile-section-heading span,.profile-art>span{color:#6458f5;font-size:9px;font-weight:800;letter-spacing:.16em}
+.profile-heading h1{margin:9px 0;color:#18261e;font-size:clamp(38px,6vw,52px);font-weight:800;letter-spacing:-.075em;line-height:.98}
+.profile-heading h1 em{color:#6458f5;font-style:normal}
+.profile-heading p{margin:10px 0 0;color:#818b83;font-size:12px}
+.profile-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(230px,.75fr);align-items:stretch;gap:16px}
+.profile-card{padding:24px;border:1px solid #e2e7e1;border-radius:10px;background:#fff;box-shadow:0 12px 35px #18271e09}
+.profile-form{display:grid;gap:17px}
+.profile-section-heading{display:flex;align-items:center;justify-content:space-between}
+.profile-section-heading h2{margin:6px 0 0;color:#26342c;font-size:16px;font-weight:750;letter-spacing:-.03em}
+.profile-avatar-row{display:flex;align-items:center;gap:13px}
+.profile-avatar{width:64px;height:64px;overflow:hidden;border:1px solid #e7e7f4;border-radius:50%;background:#f1f0ff}
+.profile-avatar img{width:100%;height:100%;object-fit:cover}
+.upload-photo{position:relative;overflow:hidden;padding:9px 12px;border:1px solid #e2e0fb;border-radius:5px;background:#f6f5ff;color:#5b50e8;font-size:10px;font-weight:700;cursor:pointer}
+.upload-photo input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.profile-fields{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.profile-fields label{display:grid;gap:7px;color:#57645b;font-size:10px;font-weight:700}
+.profile-fields input{width:100%;min-height:42px;padding:10px 11px;border:1px solid #e0e5df;border-radius:6px;background:#fbfcfa;color:#21352a;font:inherit;font-size:11px}
+.profile-fields input::placeholder{color:#a4ada5}
+.profile-fields input:focus{border-color:#8c82ff;box-shadow:0 0 0 3px #6458f51a;outline:none}
+.profile-wide{grid-column:1/-1}
+.profile-submit{display:flex;align-items:center;justify-content:space-between;min-height:43px;padding:0 13px;border:0;border-radius:6px;background:#6458f5;color:#fff;font-size:10px;font-weight:700;cursor:pointer}
+.profile-submit span{color:#d9ff92;font-size:17px}
+.profile-feedback{margin:0;font-size:11px;line-height:1.5}
+.profile-feedback-error{color:#a64242}
+.profile-feedback-success{color:#38734c}
+.password-form{margin-top:24px;padding-top:22px;border-top:1px solid #edf0ec}
+.profile-logout{width:100%;min-height:41px;margin-top:16px;border:1px solid #f0dddd;border-radius:6px;background:#fffafa;color:#a64d4d;font-size:10px;font-weight:700;cursor:pointer}
+.profile-art{position:relative;display:flex;min-height:440px;overflow:hidden;flex-direction:column;justify-content:center;padding:30px;border-radius:9px;background:linear-gradient(145deg,#211e3e,#6255f1 68%,#8277ff);color:#fff}
+.profile-art>span,.profile-art h2,.profile-art p{position:relative;z-index:1}
+.profile-art>span{color:#d8ff94}
+.profile-art h2{margin:25px 0 13px;font-size:clamp(38px,5vw,51px);font-weight:800;letter-spacing:-.075em;line-height:.98}
+.profile-art h2 em{color:#d8ff94;font-style:normal}
+.profile-art p{max-width:200px;margin:0;color:#ffffffb8;font-size:11px;line-height:1.6}
+.profile-art-mark{position:absolute;right:-23px;bottom:28px;color:#ffffff24;font-size:200px;line-height:1;animation:profile-turn 35s linear infinite}
+@keyframes profile-turn{to{transform:rotate(360deg)}}
+@media(max-width:760px){.profile-page{padding-top:4px}.profile-layout{grid-template-columns:1fr}.profile-art{min-height:190px;padding:22px}.profile-art h2{margin:12px 0;font-size:32px}.profile-art-mark{right:10px;bottom:-20px;font-size:130px}.profile-card{padding:19px}}
+@media(max-width:420px){.profile-fields{grid-template-columns:1fr}.profile-wide{grid-column:auto}}
+@media(prefers-reduced-motion:reduce){.profile-art-mark{animation:none}}

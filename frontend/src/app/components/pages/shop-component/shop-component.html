@@ -1,11 +1,53 @@
-<app-container-component>
+<main class="shop-page">
+  <section class="hero-shell">
+    <div class="hero-copy">
+      <span class="hero-kicker"><i></i> OBJETOS PARA VIVIRLOS</span>
+      <h1>Lo bueno<br>se nota<span>.</span></h1>
+      <p>Diseño que suma, detalles que duran. Encuentra aquí tus próximos favoritos.</p>
+      <div class="hero-actions">
+        <a class="hero-button" href="#catalogo">Explorar productos <span aria-hidden="true">↘</span></a>
+        <span class="hero-caption">Una tienda pequeña<br>para grandes hallazgos.</span>
+      </div>
+      <div class="hero-index"><span>01</span><span class="index-line"></span><span>SELECCIÓN ACTUAL</span></div>
+    </div>
+    <div class="hero-visual" aria-label="Producto destacado de la tienda">
+      <div class="visual-orbit orbit-one"></div><div class="visual-orbit orbit-two"></div>
+      <div class="visual-sun"></div>
+      <img *ngIf="products().length && products()[0].images?.length" [src]="getImageUrl(products()[0])" [alt]="products()[0].name" fetchpriority="high">
+      <div class="visual-placeholder" *ngIf="!products().length || !products()[0].images?.length"><span>✳</span><small>HECHO PARA TI</small></div>
+      <div class="visual-tag"><span>DESTACADO</span><b>{{ products()[0]?.name || 'Diseño, sin complicaciones' }}</b><span class="tag-arrow">↗</span></div>
+      <span class="visual-number">Nº 001</span>
+    </div>
+    <div class="hero-bottom"><span>DISEÑO · OBJETOS · VIDA</span><a href="#catalogo">DESCUBRE LA COLECCIÓN <span>↓</span></a></div>
+  </section>
 
-  <div style=" display: grid;    grid-template-columns: repeat(auto-fit, 400px);  gap: 1rem;max-width: 1800px;   margin: 0 auto;  " *ngIf="products.length > 0; else loading">
+  <section class="value-strip" aria-label="Nuestra selección">
+    <div><span class="value-symbol">✳</span><span><b>Elegido con intención</b><small>Piezas con algo que contar</small></span></div>
+    <div><span class="value-symbol">↗</span><span><b>Compra fácil</b><small>Tu pedido, sin vueltas</small></span></div>
+    <div><span class="value-symbol">♡</span><span><b>Para usar cada día</b><small>Diseño que sí se disfruta</small></span></div>
+  </section>
 
-    <app-product-card-component  *ngFor="let product of products" [item]="product" ></app-product-card-component>
-
-  </div>
-  <ng-template #loading>
-    Cargando productos...
-  </ng-template>
-</app-container-component>
+  <section class="catalog" id="catalogo">
+    <div class="catalog-topline"><span class="section-label">CATÁLOGO / 2026</span><span class="product-count" *ngIf="!loading()">{{ filteredProducts().length }} artículos</span></div>
+    <div class="catalog-heading"><h2>Encuentra <span>eso tuyo.</span></h2><p>Buenas ideas, listas para<br>formar parte de tu día.</p></div>
+    <div class="catalog-controls">
+      <div class="category-list" aria-label="Filtrar por categoría">
+        <button type="button" [class.selected]="selectedCategory() === 'Todas'" (click)="selectCategory('Todas')">Todo <span>{{ products().length }}</span></button>
+        <button type="button" *ngFor="let category of categories()" [class.selected]="selectedCategory() === category" (click)="selectCategory(category)">{{ category }}</button>
+      </div>
+      <label class="search-box">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg>
+        <input type="search" placeholder="Buscar en la tienda" aria-label="Buscar productos" [ngModel]="searchTerm()" (ngModelChange)="setSearchTerm($event)">
+        <span class="search-shortcut">⌕</span>
+      </label>
+    </div>
+    <div class="product-grid" *ngIf="filteredProducts().length; else emptyState">
+      <app-product-card-component *ngFor="let product of paginatedProducts(); let i = index" [item]="product" [style.--card-index]="i"></app-product-card-component>
+    </div>
+    <app-pagination [totalItems]="filteredProducts().length" [pageSize]="pageSize" [currentPage]="page()" (pageChange)="page.set($event)"></app-pagination>
+    <ng-template #emptyState>
+      <div class="empty-state"><span>{{ loading() ? '✳' : '⌕' }}</span><h3>{{ loading() ? 'Cargando hallazgos...' : 'No hay resultados' }}</h3><p>{{ loading() ? 'Enseguida estará lista la selección.' : 'Prueba con otro nombre o categoría.' }}</p></div>
+    </ng-template>
+  </section>
+  <footer class="shop-footer"><a class="footer-brand" routerLink="/shop">NOVA<span>®</span></a><span>Diseño para estar, usar y disfrutar.</span><a href="#catalogo">VOLVER ARRIBA ↑</a></footer>
+</main>

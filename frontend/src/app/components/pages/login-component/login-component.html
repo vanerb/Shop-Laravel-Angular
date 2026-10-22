@@ -1,51 +1,16 @@
 <app-container-component>
-
-  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%">
-    <div style="width: 800px; padding: 20px; background-color: #1a1d20; border-radius: 5px">
-      <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
-        <div style="width: 80%;">
-          <div style="width: 100%; display: flex; justify-content: center; align-items: center">
-            <h2 class="text-primary"  style="color: white" >LOGIN</h2>
-          </div>
-
-          <form [formGroup]="form" (ngSubmit)="login()"
-                style="width: 100%; height: 100%; background-color: var(--background-four); padding: 20px; border: 2px transparent solid; border-radius: 5px">
-
-            <div style="height: 100%; width: 100%; ">
-              <div style="display: flex; flex-direction: column;">
-                <label style="color: white" class="text-primary" for="email">Email</label>
-                <input formControlName="email"
-                       style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
-                       type="text" id="email" placeholder="Introduzca un correo válido">
-              </div>
-
-              <div style="display: flex; flex-direction: column; margin-top: 20px">
-                <label  style="color: white"  class="text-primary" for="email">Contraseña</label>
-                <input formControlName="password"
-                       style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
-                       type="password" id="password" placeholder="Introduzca una contraseña válida">
-              </div>
-            </div>
-            <div style="width: 100%; margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
-              <div style="width: 100%">
-            <span class="text-primary" style="font-size: 14px; color: white">Si no tienes cuenta puedes crear pulsando <a
-              [routerLink]="['/register']"  style="color: white" >aquí</a></span>
-              </div>
-              <div style="width: 100%; display: flex; justify-content: end; align-items: center">
-                <button type="submit"
-                        style="padding-left: 16px; padding-right: 16px; height: 40px; background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer">
-                  Entrar
-                </button>
-              </div>
-
-            </div>
-
-          </form>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-
+  <main class="auth-page">
+    <section class="auth-card">
+      <div class="auth-brand"><span>N</span> NOVA</div>
+      <div class="auth-heading"><small>QUÉ BUENO VERTE</small><h1>Entra a tu<br><em>espacio.</em></h1><p>Accede a tu cuenta y guarda tus próximos favoritos.</p></div>
+      <form [formGroup]="form" (ngSubmit)="login()">
+        <label>Correo electrónico<input formControlName="email" type="email" autocomplete="email" placeholder="nombre@correo.com"></label>
+        <label>Contraseña<input formControlName="password" type="password" autocomplete="current-password" placeholder="Tu contraseña"></label>
+        <p class="auth-error" *ngIf="authService.loginError()" role="alert">{{ authService.loginError() }}</p>
+        <button class="auth-submit" type="submit" [disabled]="form.invalid">Entrar <span aria-hidden="true">↗</span></button>
+      </form>
+      <p class="auth-switch">¿Aún no tienes una cuenta? <a routerLink="/register">Crear cuenta</a></p>
+    </section>
+    <aside class="auth-art"><div class="auth-orb orb-a"></div><div class="auth-orb orb-b"></div><div class="auth-art-star">✳</div><span>OBJETOS PARA VIVIRLOS</span><h2>Las buenas<br>ideas empiezan<br><em>por elegir.</em></h2><small>DISEÑO QUE SUMA. DETALLES QUE DURAN.</small></aside>
+  </main>
 </app-container-component>

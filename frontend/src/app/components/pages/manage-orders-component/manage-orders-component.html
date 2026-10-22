@@ -1,1 +1,11 @@
-<p>manage-orders-component works!</p>
+<app-container-component><main class="admin-management">
+  <header class="admin-page-heading"><div><a class="admin-back" routerLink="/administration">← Panel de control</a><span class="admin-eyebrow">VENTAS</span><h1>Pedidos</h1><p>Revisa las compras y mantén informado al cliente.</p></div><button class="admin-secondary" (click)="loadOrders()" [disabled]="loading()">Actualizar</button></header>
+  <p class="admin-alert" *ngIf="notice()">{{ notice() }}</p>
+  <section class="admin-card"><div class="admin-card-heading"><div><h2>Todos los pedidos</h2><p>{{ orders().length }} pedidos</p></div></div>
+    <div class="admin-loading" *ngIf="loading()">Cargando pedidos…</div>
+    <ng-container *ngIf="!loading() && orders().length"><div class="admin-table-scroll"><table class="admin-table"><thead><tr><th>Pedido</th><th>Cliente</th><th>Dirección</th><th>Total</th><th>Fecha</th><th>Estado</th><th>Acción</th></tr></thead><tbody>
+      <tr *ngFor="let order of paginatedOrders()"><td><strong>#{{ order.id }}</strong></td><td><strong>{{ order.name }}</strong><small class="admin-cell-subtitle">{{ order.email }}</small></td><td>{{ order.direction }}, {{ order.city }}<small class="admin-cell-subtitle">{{ order.zip }} · {{ order.country }}</small></td><td class="admin-price">{{ order.total | currency:'EUR':'symbol':'1.2-2' }}</td><td>{{ order.created_at | date:'mediumDate' }}</td><td><label class="admin-status-control"><span class="admin-badge" [attr.data-status]="order.status">{{ statusLabel(order.status) }}</span><select [value]="order.status" (change)="setStatus(order, $event)" aria-label="Cambiar estado del pedido"><option *ngFor="let status of statuses" [value]="status">{{ statusLabel(status) }}</option></select></label></td><td><button class="admin-danger" (click)="delete(order)">Eliminar</button></td></tr>
+    </tbody></table></div><app-pagination [totalItems]="orders().length" [pageSize]="pageSize" [currentPage]="page()" (pageChange)="page.set($event)"></app-pagination></ng-container>
+    <div class="admin-empty" *ngIf="!loading() && !orders().length"><span>▤</span><strong>No hay pedidos todavía</strong><p>Los pedidos de la tienda aparecerán en este listado.</p></div>
+  </section>
+</main></app-container-component>

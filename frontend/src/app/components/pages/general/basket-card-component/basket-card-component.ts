@@ -1,6 +1,5 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Basket} from '../../../../interfaces/basket';
-import {getImageUrl} from '../../../../helpers/utilities.helper';
+import {Component, input, output} from '@angular/core';
+import {getImageUrl, getProductCoverImage} from '../../../../helpers/utilities.helper';
 import {Product} from '../../../../interfaces/products';
 
 @Component({
@@ -10,9 +9,9 @@ import {Product} from '../../../../interfaces/products';
   styleUrl: './basket-card-component.css'
 })
 export class BasketCardComponent {
-  @Input() product!:Product
-  @Input() viewMode: 'view' | 'editable' = 'view'
-  @Output() remove: EventEmitter<Product> = new EventEmitter<Product>();
+  readonly product = input.required<Product>();
+  readonly viewMode = input<'view' | 'editable'>('view');
+  readonly remove = output<Product>();
 
 
 
@@ -21,4 +20,8 @@ export class BasketCardComponent {
   }
 
   protected readonly getImageUrl = getImageUrl;
+
+  getCoverImage(product: Product) {
+    return getProductCoverImage(product.images);
+  }
 }

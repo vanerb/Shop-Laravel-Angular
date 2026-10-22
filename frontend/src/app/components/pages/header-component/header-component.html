@@ -1,33 +1,45 @@
-<div
-  style="width: 100%; height: 40px; justify-content: space-between; align-items: center; display: flex;background-color: #1a1d20; color: white; font-family: Arial;padding-top: 20px">
-  <!-- Menú izquierdo -->
-  <div style="display: flex; justify-content: start; align-items: center">
-    <div *ngFor="let item of getMenu('left')" (click)="item.action?.()"
-         class="hover-bg"
-         style="--hover-bg: #3f3f3f; height: 40px; padding: 0 20px; cursor: pointer">
-      {{ item.name }}
-    </div>
-  </div>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" routerLink="/shop" aria-label="Nativa, inicio de la tienda">
+      <span class="brand-mark" aria-hidden="true">N</span>
+      <span>NOVA<span class="brand-period">®</span></span>
+    </a>
 
-  <div style="display: flex; justify-content: end; align-items: center; position: relative;">
-    <div *ngFor="let item of getMenu('right')" class="menu-item-wrapper" style="position: relative;">
-      <div
-        class="hover-bg"
-        style="--hover-bg: #3f3f3f; height: 40px; padding: 0 20px; cursor: pointer;"
-        (click)="item.action?.()"
-        [ngClass]="{'has-children': item.children && item.children.length > 0}">
-        {{ item.name }}
-      </div>
+    <button class="menu-toggle" type="button" (click)="toggleMenu()"
+            [attr.aria-expanded]="menuOpen()" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </button>
 
-      <div *ngIf="item.children && item.children.length > 0" class="submenu">
-        <div *ngFor="let sub of item.children" (click)="sub.action?.()" class="submenu-item">
-          {{ sub.name }}
+    <nav class="main-nav" [class.is-open]="menuOpen()" aria-label="Navegación principal">
+      <a routerLink="/shop" routerLinkActive="active" (click)="closeMenus()">Tienda</a>
+      <a routerLink="/contact" routerLinkActive="active" (click)="closeMenus()" *ngIf="isLoggedIn()">Contacto</a>
+      <a class="mobile-account" routerLink="/profile" (click)="closeMenus()" *ngIf="isLoggedIn()">Mi perfil</a>
+      <button class="mobile-logout" type="button" (click)="logout()" *ngIf="isLoggedIn()"><span aria-hidden="true">↪</span> Cerrar sesión</button>
+      <a class="mobile-account" routerLink="/login" (click)="closeMenus()" *ngIf="!isLoggedIn()">Iniciar sesión</a>
+    </nav>
+
+    <div class="header-actions">
+      <a class="icon-link" routerLink="/basket" aria-label="Ir a la cesta" *ngIf="isLoggedIn()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
+        <span class="basket-label">Cesta</span>
+      </a>
+      <div class="account-menu" *ngIf="isLoggedIn()">
+        <button class="profile-link" type="button" (click)="toggleAccountMenu()"
+                [attr.aria-expanded]="accountMenuOpen()" aria-haspopup="menu">
+          <span class="account-avatar" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="10" cy="7" r="3"/><path d="M4.5 17c.5-3 2.3-4.5 5.5-4.5s5 1.5 5.5 4.5"/></svg></span>
+          <span>Mi cuenta</span>
+          <svg class="account-chevron" [class.rotated]="accountMenuOpen()" viewBox="0 0 12 12" aria-hidden="true"><path d="m2 4 4 4 4-4"/></svg>
+        </button>
+        <div class="account-dropdown" *ngIf="accountMenuOpen()" role="menu">
+          <div class="account-dropdown-heading"><span class="account-avatar" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="10" cy="7" r="3"/><path d="M4.5 17c.5-3 2.3-4.5 5.5-4.5s5 1.5 5.5 4.5"/></svg></span><span><b>Tu cuenta</b><small>Gestiona tu espacio NOVA</small></span></div>
+          <a routerLink="/profile" (click)="closeMenus()" role="menuitem"><span class="menu-icon">◉</span> Mi perfil <span class="menu-arrow">↗</span></a>
+          <a routerLink="/my-orders" (click)="closeMenus()" role="menuitem"><span class="menu-icon">▤</span> Mis pedidos <span class="menu-arrow">↗</span></a>
+          <a routerLink="/administration" *ngIf="type() === 'admin'" (click)="closeMenus()" role="menuitem"><span class="menu-icon">⌘</span> Administración <span class="menu-arrow">↗</span></a>
+          <div class="account-dropdown-divider"></div>
+          <button class="account-logout" type="button" role="menuitem" (click)="logout()"><span aria-hidden="true">↪</span> Cerrar sesión</button>
         </div>
       </div>
+      <a class="login-link" routerLink="/login" *ngIf="!isLoggedIn()">Entrar <span aria-hidden="true">↗</span></a>
     </div>
   </div>
-</div>
-
-
-
-
+</header>

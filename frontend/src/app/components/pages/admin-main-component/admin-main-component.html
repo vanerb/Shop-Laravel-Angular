@@ -1,82 +1,14 @@
 <app-container-component>
-  <div style=" display: grid;  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;max-width: 1800px;   margin: 0 auto;  ">
-
-
-    <div (click)="goToUrl('/admin-products')" style="background-color: white; cursor: pointer ; border-radius: 10px; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center" *ngIf="type !== 'user'">
-      <div style="width: 100%; height: fit-content; display: flex; justify-content: center; align-items: center; padding: 20px">
-        <div style="width: 100%; height: 100%;">
-          <div style="width: 100%; flex: 0 0 0; overflow: hidden;">
-            <img src="http://localhost:8000/storage/general/icons8-edit-property-48.png" alt="No Image"
-                 style="width: auto; height: 100px; display: block; margin: 0 auto; object-fit: contain; object-position: center;">
-          </div>
-
-          <div style="text-align: center;">
-            <span>Administrar Productos</span>
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div (click)="goToUrl('/admin-categories')" style="background-color: white; cursor: pointer ; border-radius: 10px; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center" *ngIf="type !== 'user'">
-      <div style="width: 100%; height: fit-content; display: flex; justify-content: center; align-items: center; padding: 20px">
-        <div style="width: 100%; height: 100%;">
-          <div style="width: 100%; flex: 0 0 0; overflow: hidden;">
-            <img src="http://localhost:8000/storage/general/icons8-category-48.png" alt="No Image"
-                 style="width: auto; height: 100px; display: block; margin: 0 auto; object-fit: contain; object-position: center;">
-          </div>
-
-          <div style="text-align: center;">
-            <span>Administrar Categorias</span>
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-<!--    <div (click)="goToUrl('/admin-orders')" style="background-color: white; cursor: pointer ; border-radius: 10px; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center" *ngIf="type !== 'user'">-->
-<!--      <div style="width: 100%; height: fit-content; display: flex; justify-content: center; align-items: center; padding: 20px">-->
-<!--        <div style="width: 100%; height: 100%;">-->
-<!--          <div style="width: 100%; flex: 0 0 0; overflow: hidden;">-->
-<!--            <img src="http://localhost:8000/storage/general/icons8-purchase-order-50.png" alt="No Image"-->
-<!--                 style="width: auto; height: 100px; display: block; margin: 0 auto; object-fit: contain; object-position: center;">-->
-<!--          </div>-->
-
-<!--          <div style="text-align: center;">-->
-<!--            <span>Administrar Pedidos</span>-->
-<!--          </div>-->
-
-<!--        </div>-->
-
-<!--      </div>-->
-
-<!--    </div>-->
-
-    <div (click)="goToUrl('/admin-users')" style="background-color: white; cursor: pointer ; border-radius: 10px; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center" *ngIf="type !== 'user'">
-      <div style="width: 100%; height: fit-content; display: flex; justify-content: center; align-items: center; padding: 20px">
-        <div style="width: 100%; height: 100%;">
-          <div style="width: 100%; flex: 0 0 0; overflow: hidden;">
-            <img src="http://localhost:8000/storage/general/icons8-users-48.png" alt="No Image"
-                 style="width: auto; height: 100px; display: block; margin: 0 auto; object-fit: contain; object-position: center;">
-          </div>
-
-          <div style="text-align: center;">
-            <span>Administrar Usuarios</span>
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-
-  </div>
+  <main class="admin-management admin-dashboard">
+    <header class="admin-page-heading">
+      <div><span class="admin-eyebrow">NOVA · ADMINISTRACIÓN</span><h1>Panel de control</h1>
+        <p>Gestiona la tienda desde un solo lugar.</p></div>
+    </header>
+    <nav class="admin-shortcuts" aria-label="Secciones de administración">
+      <a class="admin-shortcut" routerLink="/admin-products"><span class="admin-shortcut-icon">▦</span><span><strong>Productos</strong><small>Catálogo, precios e imágenes</small></span><span class="admin-arrow">→</span></a>
+      <a class="admin-shortcut" routerLink="/admin-categories"><span class="admin-shortcut-icon">◇</span><span><strong>Categorías</strong><small>Organiza el catálogo</small></span><span class="admin-arrow">→</span></a>
+      <a class="admin-shortcut" routerLink="/admin-orders"><span class="admin-shortcut-icon">▤</span><span><strong>Pedidos</strong><small>Consulta y actualiza pedidos</small></span><span class="admin-arrow">→</span></a>
+      <a class="admin-shortcut" routerLink="/admin-users"><span class="admin-shortcut-icon">♙</span><span><strong>Usuarios</strong><small>Perfiles y permisos</small></span><span class="admin-arrow">→</span></a>
+    </nav>
+  </main>
 </app-container-component>

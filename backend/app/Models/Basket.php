@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Basket extends Model
 {
-     protected $fillable = ['user_id'];
+     protected $fillable = ['user_id', 'finished'];
 
         public function user()
         {

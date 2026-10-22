@@ -1,0 +1,3 @@
+:host{display:block;min-width:0}
+.app-container{min-height:calc(100vh - 76px);overflow-x:hidden;padding:clamp(18px,4vw,46px);background:#f5f6f3;color:#1d2a21}
+@media(max-width:600px){.app-container{padding:18px 14px 30px}}

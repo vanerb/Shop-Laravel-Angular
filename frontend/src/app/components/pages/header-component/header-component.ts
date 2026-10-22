@@ -1,9 +1,6 @@
-import {Component, OnInit, SimpleChanges} from '@angular/core';
-import {UsersService} from '../../../services/users-service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {AuthService} from '../../../services/auth-service';
-import {Header} from '../../../interfaces/header';
-import {sleep} from '../../../helpers/utilities.helper';
+import { Component, ElementRef, HostListener, OnInit, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../services/auth-service';
 
 @Component({
   selector: 'app-header-component',
@@ -11,171 +8,53 @@ import {sleep} from '../../../helpers/utilities.helper';
   templateUrl: './header-component.html',
   styleUrl: './header-component.css'
 })
-export class HeaderComponent  implements OnInit{
-  menu: Header[] = []
-  selected: string = ""
-  type: string | false | null = null;
+export class HeaderComponent implements OnInit {
+  readonly type = signal<string | false | null>(null);
+  readonly isLoggedIn = signal(false);
+  readonly menuOpen = signal(false);
+  readonly accountMenuOpen = signal(false);
 
   constructor(
     private readonly authService: AuthService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private readonly userService: UsersService,
-  ) {
+    private readonly router: Router,
+    private readonly elementRef: ElementRef<HTMLElement>,
+  ) {}
 
+  ngOnInit(): void {
+    this.isLoggedIn.set(this.authService.isLoggedIn());
+    this.type.set(this.authService.getType());
+    if (!this.isLoggedIn()) return;
+
+    this.authService.getUserByToken().subscribe({
+      next: user => {
+        this.type.set(user.type);
+        this.authService.setType(user.type);
+      },
+      error: () => this.type.set(null)
+    });
   }
 
-  async ngOnInit() {
-    if (this.authService.isLoggedIn()) {
-      this.menu = [
-       /* {
-          key: "init",
-          name: "Inicio",
-          position: "left",
-          action: async () => {
-            await this.router.navigate(['/']);
-            await this.selectionMenu();
-          }
-        },*/
-        {
-          key: "shop",
-          name: "Tienda",
-          position: "left",
-          action: async () => {
-            await this.router.navigate(['/shop']);
-            await this.selectionMenu();
-          }
-        },
-        {
-          key: "contact",
-          name: "Contacto",
-          position: "left",
-          action: async () => {
-            await this.router.navigate(['/contact']);
-            await this.selectionMenu();
-          }
-        },
-        {
-          key: "basket",
-          name: "Cesta",
-          position: "right",
-          action: async () => {
-            await this.router.navigate(['/basket']);
-            await this.selectionMenu();
-          }
-        },
-        {
-          key: "profile",
-          name: "Mi perfil",
-          position: "right",
-          action: async () => {
-            await this.router.navigate(['/profile']);
-            await this.selectionMenu();
-          },
-          children: [
-            {
-              key: "my-panel",
-              name: "Mi perfil",
-              position: "right",
-              action: async () => {
-                await this.router.navigate(['/profile/']);
-                await this.selectionMenu();
-              }
-            },
-            {
-              key: "my-panel",
-              name: "Mis pedidos",
-              position: "right",
-              action: async () => {
-                await this.router.navigate(['/my-orders/']);
-                await this.selectionMenu();
-              }
-            },
-            {
-              key: "my-panel",
-              name: "Administración",
-              position: "right",
-              action: async () => {
-                await this.router.navigate(['/administration/']);
-                await this.selectionMenu();
-              }
-            },
-            {
-              key: "logout",
-              name: "Cerrar sesión",
-              position: "right",
-              action: async () => {
-                this.authService.logout();
-                await this.router.navigate(['/login']);
-                await this.selectionMenu();
-                window.location.reload()
-              }
-            }
-          ]
-        }
-      ];
+  toggleMenu(): void { this.menuOpen.update(open => !open); }
 
+  toggleAccountMenu(): void { this.accountMenuOpen.update(open => !open); }
 
-
-
-
-      this.type = this.authService.getType()
-
-
-    }
-
-    await this.selectionMenu()
-
-
+  closeMenus(): void {
+    this.menuOpen.set(false);
+    this.accountMenuOpen.set(false);
   }
 
-  getMenu(pos: string) {
-    if (pos === "right") {
-      return this.menu.filter(el => el.position === "right")
-    } else {
-      return this.menu.filter(el => el.position === "left")
-    }
-
+  logout(): void {
+    this.authService.logout();
+    this.isLoggedIn.set(false);
+    this.type.set(null);
+    this.closeMenus();
   }
 
-
-  async selectionMenu() {
-    await sleep(0)
-    let item = this.router.url.split("/")[1]
-
-    console.log(item)
-    switch (item) {
-      case "inventory":
-        this.selected = this.menu.find(el => el.key === "items")?.name ?? ""
-        return
-
-      case "init":
-        this.selected = this.menu.find(el => el.key === "init")?.name ?? ""
-        return
-      case "contact":
-        this.selected = this.menu.find(el => el.key === "contact")?.name ?? ""
-        return
-      case "profile":
-        this.selected = this.menu.find(el => el.key === "profile")?.name ?? ""
-        return
-      case "my-panel":
-        this.selected = this.menu.find(el => el.key === "profile")?.name ?? ""
-        return
-      case "":
-        this.selected = this.menu.find(el => el.key === "init")?.name ?? ""
-        return
-
-      case "login":
-        this.selected = this.menu.find(el => el.key === "login")?.name ?? ""
-        return
-      case "logout":
-        this.selected = this.menu.find(el => el.key === "login")?.name ?? ""
-        return
-
-    }
+  @HostListener('document:click', ['$event'])
+  closeAccountMenuOnOutsideClick(event: MouseEvent): void {
+    if (!this.elementRef.nativeElement.contains(event.target as Node)) this.accountMenuOpen.set(false);
   }
 
-  async ngOnChanges(changes: SimpleChanges) {
-
-  }
+  @HostListener('document:keydown.escape')
+  closeAccountMenuOnEscape(): void { this.closeMenus(); }
 }

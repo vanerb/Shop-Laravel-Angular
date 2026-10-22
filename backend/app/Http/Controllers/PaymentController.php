@@ -2,104 +2,97 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Payment;
+use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
+    public function index()
+    {
+        return Auth::user()->payments()->latest()->get();
+    }
 
+    public function all()
+    {
+        abort_unless(Auth::user()->type === 'admin', 403);
 
+        return Payment::with(['user', 'basket.products'])->latest()->get();
+    }
 
-    public function index() {
-                return Auth::user()->payments()->get();
-            }
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'basket_id' => 'required|integer|exists:baskets,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'direction' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'zip' => 'required|string|max:32',
+            'country' => 'required|string|max:100',
+        ]);
 
-         public function all() {
-                            return Payment::all();
-                        }
+        $payment = DB::transaction(function () use ($data) {
+            $user = Auth::user();
+            $basket = $user->basket()
+                ->whereKey($data['basket_id'])
+                ->where('finished', false)
+                ->with('products')
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        public function store(Request $request) {
-   $request->validate([
-          'basket_id' => 'required|exists:baskets,id',
-          'total' => 'required|string|max:255',
-          'status' => 'required|string|max:255',
-          'name' => 'required|string|max:255',
-          'email' => 'required|string|max:255',
-          'direction' => 'required|string|max:255',
-          'city' => 'required|string|max:255',
-          'zip' => 'required|string|max:255',
-          'country' => 'required|string|max:255',
-      ]);
+            abort_if($basket->products->isEmpty(), 422, 'No puedes completar una cesta vacía.');
 
-      $payment = Auth::user()->payments()->where('basket_id', $request->basket_id)->first();
-      if (!is_null($payment)) {
-          return response()->json(['message' => 'Ya existe'], 201);
-      }
+            $total = $basket->products->sum(
+                fn ($product) => (float) $product->price * (int) $product->pivot->quantity
+            );
 
-    $basket = Auth::user()->basket()->where('id', $request->basket_id)->firstOrFail();
+            $payment = $user->payments()->create([
+                'basket_id' => $basket->id,
+                'total' => number_format($total, 2, '.', ''),
+                'status' => 'pending',
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'direction' => $data['direction'],
+                'city' => $data['city'],
+                'zip' => $data['zip'],
+                'country' => $data['country'],
+            ]);
 
-    $basket->finished = 1;
-    $basket->save();
+            $basket->update(['finished' => true]);
 
-      $payment = Auth::user()->payments()->create([
-          'basket_id' => $request->basket_id,
-          'total' => $request->total,
-          'status' => $request->status,
-          'name' => $request->name,
-          'email' => $request->email,
-          'direction' => $request->direction,
-          'city' => $request->city,
-          'zip' => $request->zip,
-          'country' => $request->country,
-      ]);
+            return $payment;
+        });
 
-      return response()->json($payment, 201);
-        }
+        return response()->json($payment, 201);
+    }
 
-        public function show($id) {
-       $category = Auth::user()->payment()->where('id', $id)->firstOrFail();
+    public function show(int $id)
+    {
+        return Auth::user()->payments()->with('basket.products')->findOrFail($id);
+    }
 
-        return response()->json($category);
-        }
+    public function update(Request $request, int $id)
+    {
+        abort_unless(Auth::user()->type === 'admin', 403);
 
-        public function update(Request $request, $id) {
-            $request->validate([
-                'total' => 'required|string|max:255',
-                                 'status' => 'required|string|max:255',
-                                  'name' => 'required|string|max:255',
-                                   'email' => 'required|string|max:255',
-                                    'direction' => 'required|string|max:255',
-                                    'city' => 'required|string|max:255',
-                                     'zip' => 'required|string|max:255',
-                                      'country' => 'required|string|max:255',
-           ]);
+        $data = $request->validate([
+            'status' => 'required|string|in:pending,processing,completed,cancelled',
+        ]);
 
-           // Buscar categoría que pertenezca al usuario
-           $payment = Auth::user()->payments()->where('id', $id)->firstOrFail();
+        $payment = Payment::findOrFail($id);
+        $payment->update($data);
 
-           // Actualizar
-           $payment->update([
-            'total' => $request->total,
-                            'status' => $request->status,
-                            'name' => $request->name,
-                            'email' => $request->email,
-                            'direction' => $request->direction,
-                             'city' => $request->city,
-                            'zip' => $request->zip,
-                            'country' => $request->country,
-           ]);
+        return response()->json($payment);
+    }
 
-           return response()->json($payment);
-        }
+    public function destroy(int $id)
+    {
+        abort_unless(Auth::user()->type === 'admin', 403);
 
+        Payment::findOrFail($id)->delete();
 
-        public function destroy($id) {
-     $payment = Auth::user()->payments()->where('id', $id)->firstOrFail();
-
-        // Eliminar
-        $payment->delete();
-
-        return response()->json(['message' => 'Categoría eliminada correctamente'], 200);
-        }
+        return response()->json(['message' => 'Pedido eliminado']);
+    }
 }

@@ -1,52 +1,19 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/image/products/{filename}', function ($filename) {
-    $path = storage_path('app/public/products/' . $filename);
+Route::get('/image/{directory}/{filename}', function (string $directory, string $filename) {
+    abort_unless(in_array($directory, ['products', 'profile_photos', 'general'], true), 404);
 
-    if (!file_exists($path)) {
-        abort(404);
-    }
+    $path = $directory . '/' . basename($filename);
+    abort_unless(Storage::disk('public')->exists($path), 404);
 
-    $file = file_get_contents($path);
-    $type = mime_content_type($path);
-
-    return response($file, 200)
-        ->header('Content-Type', $type)
-        ->header('Access-Control-Allow-Origin', '*');
-});
-
-Route::get('/image/profile_photos/{filename}', function ($filename) {
-    $path = storage_path('app/public/profile_photos/' . $filename);
-
-    if (!file_exists($path)) {
-        abort(404);
-    }
-
-    $file = file_get_contents($path);
-    $type = mime_content_type($path);
-
-    return response($file, 200)
-        ->header('Content-Type', $type)
-        ->header('Access-Control-Allow-Origin', '*');
-});
-
-Route::get('/image/general/{filename}', function ($filename) {
-    $path = storage_path('app/public/general/' . $filename);
-
-    if (!file_exists($path)) {
-        abort(404);
-    }
-
-    $file = file_get_contents($path);
-    $type = mime_content_type($path);
-
-    return response($file, 200)
-        ->header('Content-Type', $type)
-        ->header('Access-Control-Allow-Origin', '*');
-});
+    return Storage::disk('public')->response($path, basename($filename), [
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
+})->where('filename', '[^/]+');

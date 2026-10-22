@@ -1,41 +1,9 @@
-<app-container-component>
-  <div style="width: 100%; height: 100%;color: white">
-    <table style="width: 100%">
-      <thead style="width: 100%">
-      <tr style="width: 100%; ">
-        <th>Nombre</th>
-        <th>Descripcion</th>
-        <th>Fecha Creación</th>
-        <th>Fecha Edición</th>
-        <th>  <button (click)="add()" style="border-radius: 10px; border: 1px #0f5132 solid; background-color: #0f5132; width: 100%; height: 40px; margin-right: 10px; color: white; cursor: pointer">Añadir</button></th>
-      </tr>
-      </thead>
-
-      <tbody style="width: 100%; text-align: center">
-      <tr *ngFor="let category of categories">
-        <td>
-          <span>{{ category.name }}</span>
-        </td>
-
-        <td>
-          <span>{{ category.description }}</span>
-        </td>
-        <td>
-          <span>{{ this.getDates( category.created_at) }}</span>
-        </td>
-        <td>
-          <span>{{ this.getDates(category.updated_at) }}</span>
-        </td>
-
-        <td>
-          <div style="display: flex; justify-content: center; align-items: center">
-            <button (click)="update(category)" style="border-radius: 10px; border: 1px #0f5132 solid; background-color: #0f5132; width: 100%; height: 40px; margin-right: 10px; color: white; cursor: pointer">Editar</button>
-            <button (click)="delete(category)" style="border-radius: 10px; border: 1px red solid; background-color: red; width: 100%; height: 40px; color: white; cursor: pointer" >Borrar</button>
-          </div>
-        </td>
-      </tr>
-
-      </tbody>
-    </table>
-  </div>
-</app-container-component>
+<app-container-component><main class="admin-management">
+  <header class="admin-page-heading"><div><a class="admin-back" routerLink="/administration">← Panel de control</a><span class="admin-eyebrow">CATÁLOGO</span><h1>Categorías</h1><p>Mantén organizada la navegación de productos.</p></div><button class="admin-primary" (click)="add()">＋ Añadir categoría</button></header>
+  <p class="admin-alert" *ngIf="notice()">{{ notice() }}</p>
+  <section class="admin-card"><div class="admin-card-heading"><div><h2>Listado de categorías</h2><p>{{ categories().length }} categorías</p></div></div>
+    <div class="admin-table-scroll" *ngIf="categories().length; else noCategories"><table class="admin-table"><thead><tr><th>Nombre</th><th>Descripción</th><th>Creado</th><th>Actualizado</th><th>Acciones</th></tr></thead><tbody>
+      <tr *ngFor="let category of paginatedCategories()"><td><strong>{{ category.name }}</strong></td><td>{{ category.description || '—' }}</td><td>{{ getDates(category.created_at) }}</td><td>{{ getDates(category.updated_at) }}</td><td><div class="admin-actions"><button class="admin-secondary" (click)="update(category)">Editar</button><button class="admin-danger" (click)="delete(category)">Eliminar</button></div></td></tr>
+    </tbody></table></div><app-pagination [totalItems]="categories().length" [pageSize]="pageSize" [currentPage]="page()" (pageChange)="page.set($event)"></app-pagination><ng-template #noCategories><div class="admin-empty"><span>◇</span><strong>Aún no hay categorías</strong><p>Crea categorías para clasificar los productos.</p><button class="admin-primary" (click)="add()">Añadir categoría</button></div></ng-template>
+  </section>
+</main></app-container-component>

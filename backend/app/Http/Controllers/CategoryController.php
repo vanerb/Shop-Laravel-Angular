@@ -4,67 +4,80 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
-use App\Models\Image;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
-     public function index() {
-            return Auth::user()->categories()->get();
-        }
+    public function index()
+    {
+        $user = Auth::user();
+        $categories = $user->type === 'admin'
+            ? Category::query()
+            : $user->categories();
 
-     public function all() {
-                return Category::all();
-            }
+        return $categories->with('user:id,name')->orderBy('name')->get();
+    }
 
-    public function store(Request $request) {
- $request->validate([
+    public function all()
+    {
+        return Category::query()->orderBy('name')->get();
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
             'name' => 'required|string|max:255',
-             'description' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
         ]);
 
-        // Crea categoría ligada al usuario logueado
-        $category = Auth::user()->categories()->create([
-            'name' => $request->name,
-             'description' => $request->description,
-        ]);
+        $category = Auth::user()->categories()->create($data);
 
         return response()->json($category, 201);
     }
 
-    public function show($id) {
-   $category = Auth::user()->categories()->where('id', $id)->firstOrFail();
+    public function show(int $id)
+    {
+        $user = Auth::user();
+        $categories = $user->type === 'admin'
+            ? Category::query()
+            : $user->categories();
 
-    return response()->json($category);
+        return $categories->with('user:id,name')->findOrFail($id);
     }
 
-    public function update(Request $request, $id) {
-        $request->validate([
+    public function update(Request $request, int $id)
+    {
+        $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:255',
-       ]);
+        ]);
 
-       // Buscar categoría que pertenezca al usuario
-       $category = Auth::user()->categories()->where('id', $id)->firstOrFail();
+        $user = Auth::user();
+        $categories = $user->type === 'admin'
+            ? Category::query()
+            : $user->categories();
+        $category = $categories->findOrFail($id);
+        $category->update($data);
 
-       // Actualizar
-       $category->update([
-        'name' => $request->name,
-                     'description' => $request->description,
-       ]);
-
-       return response()->json($category);
+        return response()->json($category->load('user:id,name'));
     }
 
+    public function destroy(int $id)
+    {
+        $user = Auth::user();
+        $categories = $user->type === 'admin'
+            ? Category::query()
+            : $user->categories();
+        $category = $categories->findOrFail($id);
 
-    public function destroy($id) {
- $category = Auth::user()->categories()->where('id', $id)->firstOrFail();
+        if ($category->products()->exists()) {
+            return response()->json([
+                'message' => 'No se puede eliminar una categoría que todavía tiene productos.',
+            ], 409);
+        }
 
-    // Eliminar
-    $category->delete();
+        $category->delete();
 
-    return response()->json(['message' => 'Categoría eliminada correctamente'], 200);
+        return response()->json(['message' => 'Categoría eliminada correctamente']);
     }
 }

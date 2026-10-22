@@ -1,61 +1,35 @@
-<app-container-component>
-  <div style="display: flex; flex-direction: column; justify-content: center; align-items: center">
-    <div style="width: 800px">
-      <form [formGroup]="form">
-        <div style="display: flex; flex-direction: column;">
-          <label style="color: white" class="text-primary" for="name">Nombre</label>
-          <input formControlName="name"
-                 style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
-                 type="text" id="name" placeholder="Introduzca un nombre válido">
+<main class="checkout-page">
+  <div class="checkout-shell">
+    <a class="back-link" routerLink="/basket">← Volver a la cesta</a>
+    <div class="checkout-heading"><span>UN ÚLTIMO PASO</span><h1>Terminemos <em>bien.</em></h1><p>Completa tus datos y deja que nosotros nos ocupemos del resto.</p></div>
+    <div class="checkout-layout">
+      <form class="checkout-form" [formGroup]="form" (ngSubmit)="createPayment()">
+        <h2>Datos de entrega</h2>
+        <div class="form-grid">
+          <label>Nombre completo<input formControlName="name" autocomplete="name" placeholder="Nombre y apellidos"></label>
+          <label>Correo electrónico<input formControlName="email" type="email" autocomplete="email" placeholder="tu@correo.com"></label>
+          <label class="full-width">Dirección<input formControlName="direction" autocomplete="street-address" placeholder="Calle, número y piso"></label>
+          <label>Ciudad<input formControlName="city" autocomplete="address-level2" placeholder="Tu ciudad"></label>
+          <label>Código postal<input formControlName="zip" autocomplete="postal-code" placeholder="00000"></label>
+          <label class="full-width">País<input formControlName="country" autocomplete="country-name" placeholder="España"></label>
         </div>
-
-        <div style="display: flex; flex-direction: column;margin-top: 20px">
-          <label style="color: white" class="text-primary" for="email">Email</label>
-          <input formControlName="email"
-                 style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
-                 type="text" id="email" placeholder="Introduzca un nombre válido">
-        </div>
-
-        <div style="display: flex; flex-direction: column;margin-top: 20px">
-          <label style="color: white" class="text-primary" for="direction">Dirección</label>
-          <input formControlName="direction"
-                 style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
-                 type="text" id="direction" placeholder="Introduzca un nombre válido">
-        </div>
-
-        <div style="display: flex; flex-direction: column;margin-top: 20px">
-          <label style="color: white" class="text-primary" for="zip">Codigo postal</label>
-          <input formControlName="zip"
-                 style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
-                 type="text" id="zip" placeholder="Introduzca un nombre válido">
-        </div>
-
-        <div style="display: flex; flex-direction: column; margin-top: 20px">
-          <label style="color: white" class="text-primary" for="city">Ciudad</label>
-          <input formControlName="city"
-                 style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
-                 type="text" id="city" placeholder="Introduzca un nombre válido">
-        </div>
-
-        <div style="display: flex; flex-direction: column; margin-top: 20px">
-          <label style="color: white" class="text-primary" for="country">Pais</label>
-          <input formControlName="country"
-                 style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 0px var(--background-one) solid"
-                 type="text" id="country" placeholder="Introduzca un nombre válido">
-        </div>
-
-
+        <p class="checkout-error" *ngIf="errorMessage()" role="alert">{{ errorMessage() }}</p>
+        <button class="place-order" type="submit" [disabled]="submitting() || !basket().products.length">{{ submitting() ? 'Procesando…' : 'Confirmar pedido' }} <span aria-hidden="true">↗</span></button>
+        <small class="secure-note"><span aria-hidden="true">✦</span> Tus datos se utilizan únicamente para gestionar este pedido.</small>
       </form>
-
-      <div *ngFor="let product of basket.products">
-        <app-basket-card-component viewMode="view" [product]="product"></app-basket-card-component>
-
-      </div>
-
-      <div style="margin-top: 20px">
-        <button (click)="createPayment()" style="width: 100%; height: 40px; background-color: #0f5132; border-radius: 10px; border: 1px #0f5132 solid; margin-top: 20px; color: white; cursor: pointer">Completar compra</button>
-      </div>
+      <aside class="order-summary">
+        <div class="summary-title"><h2>Tu selección</h2><span>{{ basket().products.length }} artículos</span></div>
+        <div class="summary-items" *ngIf="basket().products.length; else emptyBasket">
+          <div class="summary-item" *ngFor="let product of paginatedProducts()">
+            <div class="summary-image"><img [src]="getImageUrl(product)" [alt]="product.name"></div>
+            <div class="summary-product"><b>{{ product.name }}</b><span>{{ product.pivot.quantity }} × {{ product.price }} €</span></div>
+            <strong>{{ lineTotal(product) }} €</strong>
+          </div>
+          <app-pagination [totalItems]="basket().products.length" [pageSize]="pageSize" [currentPage]="page()" (pageChange)="page.set($event)"></app-pagination>
+        </div>
+        <ng-template #emptyBasket><p class="empty-summary">Tu cesta está vacía.</p></ng-template>
+        <div class="summary-total"><span>Total</span><strong>{{ calculateTotal() }} €</strong></div>
+      </aside>
     </div>
   </div>
-
-</app-container-component>
+</main>

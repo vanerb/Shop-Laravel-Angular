@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, NgZone, OnInit} from '@angular/core';
+import {Component, computed, OnInit, signal} from '@angular/core';
 import {Product} from '../../../interfaces/products';
 import {ProductsService} from '../../../services/products-service';
 import {ModalService} from '../../../services/modal-service';
@@ -6,7 +6,7 @@ import {AddProductModalComponent} from './add-product-modal-component/add-produc
 import {ConfirmationModalComponent} from '../general/confirmation-modal-component/confirmation-modal-component';
 import {EditProductModalComponent} from './edit-product-modal-component/edit-product-modal-component';
 import {AuthService} from '../../../services/auth-service';
-import {getImageUrl, transformDate} from '../../../helpers/utilities.helper';
+import {getImageUrl, getProductCoverImage, transformDate} from '../../../helpers/utilities.helper';
 
 @Component({
   selector: 'app-manage-products-component',
@@ -15,41 +15,37 @@ import {getImageUrl, transformDate} from '../../../helpers/utilities.helper';
   styleUrl: './manage-products-component.css'
 })
 export class ManageProductsComponent implements OnInit {
-  products: Product[] = []
-  type: string | false | null = false;
-  constructor(private productsService: ProductsService, private cd: ChangeDetectorRef, private readonly modalService: ModalService,private zone: NgZone, private authService: AuthService) {
+  readonly products = signal<Product[]>([]);
+  readonly type = signal<string | false | null>(false);
+  readonly notice = signal('');
+  readonly page = signal(1);
+  readonly pageSize = 12;
+  readonly paginatedProducts = computed(() => {
+    const start = (this.page() - 1) * this.pageSize;
+    return this.products().slice(start, start + this.pageSize);
+  });
+  constructor(private productsService: ProductsService, private readonly modalService: ModalService, private authService: AuthService) {
 
   }
 
   ngOnInit() {
 
-    this.type = this.authService.getType()
+    this.type.set(this.authService.getType())
 
-    if(this.type === 'admin'){
-      this.productsService.getAllProducts().subscribe({
-        next: async (products: Product[]) => {
-          this.products = products
-          this.cd.detectChanges();
-        },
-        error: err => console.error("Error al cargar productos", err)
-      });
-    }
-    else{
-      this.productsService.getAllProductsByUser().subscribe({
-        next: async (products: Product[]) => {
-          this.products = products
-          this.cd.detectChanges();
-        },
-        error: err => console.error("Error al cargar productos", err)
-      });
-    }
-
-
+    this.loadProducts();
 
   }
 
+  private loadProducts(): void {
+    const request = this.type() === 'admin' ? this.productsService.getAllProducts() : this.productsService.getAllProductsByUser();
+    request.subscribe({
+      next: products => { this.products.set(products); this.page.set(1); this.notice.set(''); },
+      error: () => { this.notice.set('No se pudieron cargar los productos. Inténtalo de nuevo.'); }
+    });
+  }
+
   getImageUrl(item: Product | undefined): string {
-   return  getImageUrl(item?.images[0])
+   return  getImageUrl(getProductCoverImage(item?.images))
   }
 
 
@@ -58,7 +54,6 @@ export class ManageProductsComponent implements OnInit {
   }
 
   add(){
-    console.log("CLICK")
     this.modalService.open(AddProductModalComponent, {
         width: '90%',
 
@@ -67,18 +62,10 @@ export class ManageProductsComponent implements OnInit {
 
       this.productsService.create(item).subscribe({
         next: async () => {
-          this.productsService.getAllProductsByUser().subscribe({
-            next: (products: Product[]) => {
-                this.products = products
-              this.cd.detectChanges();
-
-            },
-            error: err => console.error("Error al cargar productos", err)
-          });
+          this.notice.set('Producto creado correctamente.');
+          this.loadProducts();
         },
-        error: (err) => {
-
-        }
+        error: () => { this.notice.set('No se pudo crear el producto. Revisa los datos e inténtalo de nuevo.'); }
       });
 
 
@@ -90,7 +77,6 @@ export class ManageProductsComponent implements OnInit {
 
 
   update(product: Product){
-    console.log("CLICK")
     this.modalService.open(EditProductModalComponent, {
         width: '90%',
 
@@ -99,18 +85,10 @@ export class ManageProductsComponent implements OnInit {
 
       this.productsService.update(product.id, item).subscribe({
         next: async () => {
-          this.productsService.getAllProductsByUser().subscribe({
-            next: (products: Product[]) => {
-              this.products = products
-              this.cd.detectChanges();
-
-            },
-            error: err => console.error("Error al cargar productos", err)
-          });
+          this.notice.set('Producto actualizado correctamente.');
+          this.loadProducts();
         },
-        error: (err) => {
-
-        }
+        error: () => { this.notice.set('No se pudo actualizar el producto. Revisa los datos e inténtalo de nuevo.'); }
       });
 
 
@@ -128,17 +106,11 @@ export class ManageProductsComponent implements OnInit {
       { title: 'Eliminar', message: '¿Está seguro de que quiere eliminar el elemento '+product.name+"?" }).then(async (item: FormData) => {
       this.productsService.delete(product.id).subscribe({
         next: () => {
-          this.productsService.getAllProductsByUser().subscribe({
-            next: (products: Product[]) => {
-              this.products = products
-              this.cd.detectChanges();
-            },
-            error: (err) => console.error("Error al cargar productos", err)
-          });
+          this.products.update(products => products.filter(item => item.id !== product.id));
+          this.page.update(page => Math.min(page, Math.max(1, Math.ceil(this.products().length / this.pageSize))));
+          this.notice.set('Producto eliminado correctamente.');
         },
-        error: (err) => {
-
-        }
+        error: () => { this.notice.set('No se pudo eliminar el producto.'); }
       });
     })
       .catch(() => {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import {Images, Product} from '../../../interfaces/products';
 import { getImageUrl } from '../../../helpers/utilities.helper';
 
@@ -11,6 +11,7 @@ import { getImageUrl } from '../../../helpers/utilities.helper';
 export class DetailComponent {
 
   product!: Product
+  readonly currentImageIndex = signal(0);
 
   confirm!: (result?: any) => void;
   close!: () => void;
@@ -18,12 +19,36 @@ export class DetailComponent {
   constructor() {
   }
 
+  get carouselImages(): Images[] {
+    const images = [...(this.product?.images ?? [])].sort((a, b) => a.id - b.id);
+    const cover = images.find(image => image.from === 'cover');
+    return cover ? [cover, ...images.filter(image => image.id !== cover.id)] : images;
+  }
+
+  get currentImage(): Images | undefined {
+    return this.carouselImages[this.currentImageIndex()] ?? this.getCoverImage();
+  }
+
+  selectImage(index: number): void {
+    if (index >= 0 && index < this.carouselImages.length) this.currentImageIndex.set(index);
+  }
+
+  previousImage(): void {
+    const length = this.carouselImages.length;
+    if (length > 1) this.currentImageIndex.update(index => (index - 1 + length) % length);
+  }
+
+  nextImage(): void {
+    const length = this.carouselImages.length;
+    if (length > 1) this.currentImageIndex.update(index => (index + 1) % length);
+  }
+
   getImageUrl(item: Images | undefined): string {
     return getImageUrl(item)
   }
 
   getCoverImage(){
-    return this.product.images.filter(el=>el.from === 'cover')[0]
+    return this.product?.images?.find(image => image.from === 'cover') ?? this.product?.images?.[0];
   }
 
   addProductBasket(item: Product | undefined){

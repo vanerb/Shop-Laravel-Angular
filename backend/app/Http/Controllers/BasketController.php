@@ -2,126 +2,105 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Basket;
-use App\Models\Product;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class BasketController extends Controller
 {
-        public function index()
-        {
-             $basket = Auth::user()->basket()
-                   ->where('finished', false)
-                   ->with('products')
-                   ->firstOrCreate([
-                       'user_id' => Auth::id(),
-                       'finished' => false,
-                   ]);
-
-               return response()->json($basket->load('products'));
+    public function index()
+    {
+        $basket = Auth::user()->basket()->where('finished', false)->first();
+        if (!$basket) {
+            $basket = Auth::user()->basket()->create(['finished' => false]);
         }
 
+        return response()->json($basket->load('products'));
+    }
 
-     public function byId($id)
-            {
-                 $basket = Basket::where('id', $id)
-                        ->where('finished', false)
-                        ->with('products')
-                        ->firstOrFail();
-
-                    return response()->json($basket);
-            }
-
-        public function addProduct(Request $request)
-        {
-           $request->validate([
-                   'product_id' => 'required|exists:products,id',
-                   'quantity' => 'nullable|integer|min:1'
-               ]);
-
-               $basket = Auth::user()->basket()
-                   ->where('finished', false)
-                   ->firstOrCreate([
-                       'user_id' => Auth::id(),
-                       'finished' => false,
-                   ]);
-
-               if ($basket->finished) {
-                   return response()->json(['message' => 'Este carrito ya está finalizado'], 400);
-               }
-
-               $quantity = $request->quantity ?? 1;
-
-               if ($basket->products()->where('product_id', $request->product_id)->exists()) {
-                   $basket->products()->updateExistingPivot($request->product_id, [
-                       'quantity' => \DB::raw("quantity + $quantity")
-                   ]);
-               } else {
-                   $basket->products()->attach($request->product_id, ['quantity' => $quantity]);
-               }
-
-               return response()->json($basket->load('products'));
-        }
-
-        public function removeProduct($productId)
-        {
-           $basket = Auth::user()->basket()
-                  ->where('finished', false)
-                  ->first();
-
-              if (!$basket) {
-                  return response()->json(['message' => 'No tienes un carrito activo'], 404);
-              }
-
-              $product = $basket->products()->where('product_id', $productId)->first();
-
-              if ($product) {
-                  $currentQuantity = $product->pivot->quantity;
-
-                  if ($currentQuantity > 1) {
-                      $basket->products()->updateExistingPivot($productId, [
-                          'quantity' => $currentQuantity - 1
-                      ]);
-                  } else {
-                      $basket->products()->detach($productId);
-                  }
-              }
-
-              return response()->json(['message' => 'Cantidad actualizada o producto eliminado']);
-        }
-
-        public function clear()
-        {
-           $basket = Auth::user()->basket()
-                  ->where('finished', false)
-                  ->first();
-
-              if ($basket) {
-                  $basket->products()->detach();
-              }
-
-              return response()->json(['message' => 'Carrito vacío']);
-        }
-
-    public function checkout()
+    public function byId(int $id)
     {
         $basket = Auth::user()->basket()
+            ->whereKey($id)
             ->where('finished', false)
+            ->with('products')
+            ->firstOrFail();
+
+        return response()->json($basket);
+    }
+
+    public function addProduct(Request $request)
+    {
+        $data = $request->validate([
+            'product_id' => 'required|integer|exists:products,id',
+            'quantity' => 'nullable|integer|min:1|max:999',
+        ]);
+        $quantity = $data['quantity'] ?? 1;
+
+        $basket = DB::transaction(function () use ($data, $quantity) {
+            $user = User::whereKey(Auth::id())->lockForUpdate()->firstOrFail();
+            $basket = $user->basket()->where('finished', false)->first();
+            if (!$basket) {
+                $basket = $user->basket()->create(['finished' => false]);
+            }
+
+            $now = now();
+            $wasInserted = DB::table('basket_product')->insertOrIgnore([
+                'basket_id' => $basket->id,
+                'product_id' => $data['product_id'],
+                'quantity' => $quantity,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+
+            if (!$wasInserted) {
+                DB::table('basket_product')
+                    ->where('basket_id', $basket->id)
+                    ->where('product_id', $data['product_id'])
+                    ->increment('quantity', $quantity, ['updated_at' => $now]);
+            }
+
+            return $basket;
+        });
+
+        return response()->json($basket->load('products'));
+    }
+
+    public function removeProduct(int $productId)
+    {
+        $basket = Auth::user()->basket()->where('finished', false)->first();
+        if (!$basket) {
+            return response()->json(['message' => 'No tienes una cesta activa.'], 404);
+        }
+
+        $pivot = DB::table('basket_product')
+            ->where('basket_id', $basket->id)
+            ->where('product_id', $productId)
             ->first();
 
-        if (!$basket) {
-            return response()->json(['message' => 'No tienes un carrito activo'], 404);
+        if ($pivot) {
+            if ((int) $pivot->quantity > 1) {
+                DB::table('basket_product')
+                    ->where('basket_id', $basket->id)
+                    ->where('product_id', $productId)
+                    ->decrement('quantity', 1, ['updated_at' => now()]);
+            } else {
+                $basket->products()->detach($productId);
+            }
         }
 
-        if ($basket->products()->count() === 0) {
-            return response()->json(['message' => 'El carrito está vacío'], 400);
+        return response()->json($basket->load('products'));
+    }
+
+    public function clear()
+    {
+        $basket = Auth::user()->basket()->where('finished', false)->first();
+        if ($basket) {
+            $basket->products()->detach();
         }
 
-        // Aquí podrías generar la lógica de pago/facturación
-        $basket->finished = true;
-        $basket->save();
-
-        return response()->json(['message' => 'Compra finalizada con éxito']);
+        return response()->json(['message' => 'Cesta vaciada correctamente.']);
     }
 }

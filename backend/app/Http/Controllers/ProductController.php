@@ -2,158 +2,172 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
+use App\Models\Category;
 use App\Models\Image;
+use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-     public function all() {
-            return Product::with(['images', 'category'])->get();
-        }
-
-    public function allByUser() {
-        return Auth::user()->products()->with(['images', 'category'])->get();
+    public function all()
+    {
+        return Product::with(['images', 'category'])->orderByDesc('created_at')->get();
     }
 
-public function store(Request $request) {
-     $data = $request->validate([
-               'name' => 'required|string|max:255',
-               'description' => 'nullable|string',
-               'price' => 'required|numeric',
-               'category_id' => 'required|exists:categories,id',
-               'images.*' => 'nullable|image|max:2048',
-               'cover_image' => 'nullable|image|max:2048',
-           ]);
+    public function allByUser()
+    {
+        $user = Auth::user();
+        $products = $user->type === 'admin'
+            ? Product::query()
+            : $user->products();
 
-           DB::transaction(function () use ($data, $request, &$product) {
-               $product = Product::create([
-                   'name' => $data['name'],
-                   'description' => $data['description'] ?? '',
-                   'price' => $data['price'],
-                   'user_id' => auth()->id(),
-                   'category_id' => $data['category_id'],
-               ]);
+        return $products->with(['images', 'category'])->orderByDesc('created_at')->get();
+    }
 
-               // Imagen de portada
-               if ($request->hasFile('cover_image')) {
-                   $path = $request->file('cover_image')->store('products', 'public');
-                   $product->images()->create([
-                       'path' => $path,
-                       'from' => 'cover',
-                   ]);
-               }
-
-               // Galería de imágenes
-               if ($request->hasFile('images')) {
-                   foreach ($request->file('images') as $img) {
-                       $path = $img->store('products', 'public');
-                       $product->images()->create([
-                           'path' => $path,
-                           'from' => 'gallery',
-                       ]);
-                   }
-               }
-           });
-
-           return response()->json($product->load('images'), 201);
-}
-
-public function show($id) {
-  $product = Product::where('id', $id)->first();
-    return $product->load('images');
-}
-
-public function update(Request $request, $id)
-{
-       $data = $request->validate([
-            'name' => 'sometimes|string|max:255',
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'sometimes|numeric',
-            'category_id' => 'sometimes|exists:categories,id',
-            'images.*' => 'nullable|image|max:2048',
-            'cover_image' => 'nullable|image|max:2048',
-            'existing_images.*' => 'nullable|integer|exists:images,id',
-            'existing_cover_image' => 'nullable|integer|exists:images,id',
-            'deleted_images.*' => 'nullable|integer|exists:images,id',
-            'deleted_cover_image' => 'nullable|boolean',
+            'price' => 'required|numeric|min:0',
+            'category_id' => 'required|integer|exists:categories,id',
+            'images' => 'sometimes|array',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
+            'cover_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
-        $product = Product::findOrFail($id);
+        $user = Auth::user();
+        $categoryQuery = Category::query()->whereKey($data['category_id']);
+        if ($user->type !== 'admin') {
+            $categoryQuery->where('user_id', $user->id);
+        }
+        $categoryQuery->firstOrFail();
 
-        // 🔹 Actualizar datos básicos
-        $updateData = [];
-        if ($request->filled('name')) $updateData['name'] = $request->name;
-        if ($request->has('description')) $updateData['description'] = $request->description;
-        if ($request->filled('price')) $updateData['price'] = $request->price;
-        if ($request->filled('category_id')) $updateData['category_id'] = $request->category_id;
-        $product->update($updateData);
+        $product = DB::transaction(function () use ($data, $request, $user) {
+            $product = $user->products()->create([
+                'name' => $data['name'],
+                'description' => $data['description'] ?? '',
+                'price' => $data['price'],
+                'category_id' => $data['category_id'],
+            ]);
 
-        // 🔹 Eliminar imágenes de galería marcadas
-        if ($request->filled('deleted_images')) {
-            $imagesToDelete = $product->images()->whereIn('id', $request->deleted_images)->get();
-            foreach ($imagesToDelete as $img) {
-                $isUsedElsewhere = \DB::table('images')
-                    ->where('path', $img->path)
-                    ->where('imageable_type', '!=', Product::class)
-                    ->exists();
+            $this->storeImages($product, $request);
 
-                if (!$isUsedElsewhere) {
-                    \Storage::disk('public')->delete($img->path);
-                }
+            return $product;
+        });
 
-                $img->delete();
+        return response()->json($product->load(['images', 'category']), 201);
+    }
+
+    public function show(int $id)
+    {
+        return Product::with(['images', 'category'])->findOrFail($id);
+    }
+
+    public function update(Request $request, int $id)
+    {
+        $data = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'description' => 'sometimes|nullable|string',
+            'price' => 'sometimes|required|numeric|min:0',
+            'category_id' => 'sometimes|required|integer|exists:categories,id',
+            'images' => 'sometimes|array',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
+            'cover_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'deleted_images' => 'sometimes|array',
+            'deleted_images.*' => 'integer',
+            'deleted_cover_image' => 'sometimes|boolean',
+        ]);
+
+        $product = Product::with('images')->findOrFail($id);
+        $this->authorizeProduct($product);
+
+        if (isset($data['category_id'])) {
+            $categoryQuery = Category::query()->whereKey($data['category_id']);
+            if (Auth::user()->type !== 'admin') {
+                $categoryQuery->where('user_id', Auth::id());
             }
+            $categoryQuery->firstOrFail();
         }
 
-        // 🔹 Eliminar portada existente si se marcó como borrada o si se va a subir otra
-        $coverImage = $product->images()->where('from', 'cover')->first();
-        if ($coverImage && ($request->boolean('deleted_cover_image') || $request->hasFile('cover_image'))) {
-            \Storage::disk('public')->delete($coverImage->path);
-            $coverImage->delete();
-        }
+        $pathsToDelete = [];
 
+        DB::transaction(function () use ($request, $data, $product, &$pathsToDelete) {
+            $product->fill(collect($data)->only(['name', 'description', 'price', 'category_id'])->all());
+            $product->save();
 
-        // 🔹 Subir nueva portada
+            if (!empty($data['deleted_images'])) {
+                $images = $product->images()->whereIn('id', $data['deleted_images'])->get();
+                foreach ($images as $image) {
+                    $pathsToDelete[] = $image->path;
+                    $image->delete();
+                }
+            }
+
+            $cover = $product->images()->where('from', 'cover')->first();
+            if ($cover && ($request->boolean('deleted_cover_image') || $request->hasFile('cover_image'))) {
+                $pathsToDelete[] = $cover->path;
+                $cover->delete();
+            }
+
+            $this->storeImages($product, $request);
+        });
+
+        $this->deleteUnusedFiles($pathsToDelete);
+
+        return response()->json($product->load(['images', 'category']));
+    }
+
+    public function destroy(int $id)
+    {
+        $product = Product::with('images')->findOrFail($id);
+        $this->authorizeProduct($product);
+        $paths = $product->images->pluck('path')->all();
+
+        DB::transaction(function () use ($product) {
+            $product->images()->delete();
+            $product->delete();
+        });
+
+        $this->deleteUnusedFiles($paths);
+
+        return response()->json(['message' => 'Producto eliminado']);
+    }
+
+    private function authorizeProduct(Product $product): void
+    {
+        abort_unless(
+            Auth::user()->type === 'admin' || (int) $product->user_id === (int) Auth::id(),
+            403
+        );
+    }
+
+    private function storeImages(Product $product, Request $request): void
+    {
         if ($request->hasFile('cover_image')) {
-            $path = $request->file('cover_image')->store('products', 'public');
             $product->images()->create([
-                'path' => $path,
+                'path' => $request->file('cover_image')->store('products', 'public'),
                 'from' => 'cover',
             ]);
         }
 
-        // 🔹 Subir nuevas imágenes de galería
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $img) {
-                $path = $img->store('products', 'public');
-                $product->images()->create([
-                    'path' => $path,
-                    'from' => 'gallery',
-                ]);
+        foreach ($request->file('images', []) as $image) {
+            $product->images()->create([
+                'path' => $image->store('products', 'public'),
+                'from' => 'gallery',
+            ]);
+        }
+    }
+
+    private function deleteUnusedFiles(array $paths): void
+    {
+        foreach (array_unique($paths) as $path) {
+            if (!Image::where('path', $path)->exists()) {
+                Storage::disk('public')->delete($path);
             }
         }
-
-        // 🔹 Las imágenes existentes que se mantienen no necesitan acción
-
-        return response()->json($product->load('images'));
-}
-
-
-public function destroy($id) {
-
- $product = Product::where('id', $id)->first();
-
-           foreach ($product->images as $img) {
-               Storage::disk('public')->delete($img->path);
-           }
-
-           $product->delete();
-
-           return response()->json(['message' => 'Producto eliminado']);
-}
-
+    }
 }

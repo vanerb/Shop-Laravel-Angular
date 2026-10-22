@@ -13,9 +13,9 @@ import {Login} from '../../../interfaces/auth';
 export class LoginComponent {
   form: FormGroup
 
-  constructor(private readonly authService: AuthService, private fb: FormBuilder, private readonly modalService: ModalService) {
+  constructor(readonly authService: AuthService, private fb: FormBuilder, private readonly modalService: ModalService) {
     this.form = this.fb.group({
-      email: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
     });
   }

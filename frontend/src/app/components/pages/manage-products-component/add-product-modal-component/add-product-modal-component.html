@@ -29,24 +29,36 @@
       <div style="display: flex; flex-direction: column; margin-top: 20px">
         <label class="text-primary" for="category_id">Categoria</label>
         <select  style="padding: 8px; margin-top: 8px; border-radius: 5px; border:1px black solid" formControlName="category_id" id="category_id">
-          <option *ngFor="let category of categories" value="{{ category.id }}">{{ category.name }}</option>
+          <option *ngFor="let category of categories()" value="{{ category.id }}">{{ category.name }}</option>
         </select>
 
       </div>
 
-      <div style="display: flex; flex-direction: column; margin-top: 20px">
-        <label class="text-primary" for="cover_image">Imagen cubierta</label>
-        <input formControlName="cover_image" (change)="onCoverImageChange($event)" accept="image/*"
-               style="padding: 8px; margin-top: 8px; border-radius: 5px; border:0px black solid"
-               type="file" id="cover_image">
-      </div>
+      <section class="image-upload-section">
+        <div class="image-upload-heading"><div><label for="cover_image">Imagen de portada</label><small>La imagen principal del producto</small></div><span>IMAGEN PRINCIPAL</span></div>
+        <label class="image-dropzone image-dropzone-cover" for="cover_image" [class.has-preview]="coverPreview()">
+          <img *ngIf="coverPreview() as preview" [src]="preview.url" alt="Vista previa de portada">
+          <span *ngIf="!coverPreview()" class="image-dropzone-icon">＋</span>
+          <span class="image-dropzone-copy"><strong>{{ coverPreview() ? 'Cambiar imagen de portada' : 'Arrastra una imagen o selecciónala' }}</strong><small>JPG, PNG o WEBP · Recomendado 1200 × 1500 px</small></span>
+          <input (change)="onCoverImageChange($event)" accept="image/*" type="file" id="cover_image">
+        </label>
+        <button *ngIf="coverPreview()" class="image-preview-remove image-cover-remove" type="button" (click)="removeCoverPreview()" aria-label="Quitar imagen de portada">×</button>
+      </section>
 
-      <div style="display: flex; flex-direction: column; margin-top: 20px">
-        <label class="text-primary" for="images">Imagenes</label>
-        <input formControlName="images" (change)="onGalleryImagesChange($event)" accept="image/*"
-               style="padding: 8px; margin-top: 8px; border-radius: 5px; border:0px black solid"
-               type="file" id="images" multiple>
-      </div>
+      <section class="image-upload-section">
+        <div class="image-upload-heading"><div><label for="images">Galería del producto</label><small>Añade varias imágenes para mostrar más detalles</small></div><span>{{ galleryPreviews().length }} IMÁGENES</span></div>
+        <label class="image-dropzone image-dropzone-compact" for="images">
+          <span class="image-dropzone-icon">▧</span><span class="image-dropzone-copy"><strong>Añadir imágenes a la galería</strong><small>Puedes seleccionar varias imágenes a la vez</small></span>
+          <input (change)="onGalleryImagesChange($event)" accept="image/*" type="file" id="images" multiple>
+        </label>
+        <div class="image-preview-grid" *ngIf="galleryPreviews().length">
+          <figure class="image-preview-card" *ngFor="let preview of galleryPreviews()">
+            <img [src]="preview.url" [alt]="preview.file.name">
+            <figcaption [title]="preview.file.name">{{ preview.file.name }}</figcaption>
+            <button type="button" class="image-preview-remove" (click)="removeGalleryPreview(preview.file)" aria-label="Quitar imagen">×</button>
+          </figure>
+        </div>
+      </section>
 
       <div style="display: flex; justify-content: end; align-items: end; margin-top: 20px">
         <button (click)="close()" style="border-radius: 10px; border: 1px #0f5132 solid; padding-right: 16px; padding-left: 16px; height: 40px; margin-right: 10px; color: black; cursor: pointer">Cancelar</button>

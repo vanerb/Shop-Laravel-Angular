@@ -1,0 +1,23 @@
+:host{display:block}
+.basket-page{width:min(1080px,100%);margin:auto}
+.basket-heading{margin:9px 0 28px;animation:basket-in .5s both}
+.basket-heading>span{color:#6458f5;font-size:9px;font-weight:800;letter-spacing:.17em}
+.basket-heading h1{margin:9px 0 0;color:#1c2921;font-size:clamp(40px,6vw,56px);font-weight:800;letter-spacing:-.07em}
+.basket-heading h1 span{color:#6458f5}
+.basket-layout{display:grid;grid-template-columns:1fr 290px;align-items:start;gap:18px}
+.basket-items{display:grid;gap:11px;min-width:0}
+.basket-total{position:sticky;top:20px;display:grid;gap:12px;padding:21px;border:1px solid #e4e8e2;border-radius:9px;background:#fff;box-shadow:0 8px 24px #19261e08;animation:basket-in .55s .08s both}
+.basket-total>span{color:#79847c;font-size:11px}
+.basket-total>strong{color:#202e25;font-size:27px;font-weight:800;letter-spacing:-.06em}
+.basket-total>small{color:#919a93;font-size:10px;line-height:1.55}
+.basket-total button{display:flex;align-items:center;justify-content:space-between;min-height:45px;margin-top:4px;padding:0 13px;border:0;border-radius:6px;background:#6458f5;color:white;font-size:11px;font-weight:700;cursor:pointer;transition:background .2s,transform .2s}
+.basket-total button:hover{transform:translateY(-2px);background:#5044e5}
+.basket-total button span{color:#d9ff92;font-size:17px}
+.basket-empty{display:grid;min-height:300px;align-content:center;justify-items:center;padding:24px;border:1px solid #e5e9e3;border-radius:9px;background:#fff;text-align:center;animation:basket-in .5s both}
+.basket-empty>span{display:grid;width:48px;height:48px;place-items:center;border-radius:14px;background:#f0efff;color:#6458f5;font-size:28px}
+.basket-empty h2{margin:16px 0 5px;color:#25332a;font-size:22px;font-weight:750;letter-spacing:-.04em}
+.basket-empty p{margin:0;color:#848e87;font-size:12px}
+.basket-empty a{margin-top:17px;color:#6458f5;text-decoration:none;font-size:12px;font-weight:700}
+@keyframes basket-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:760px){.basket-layout{grid-template-columns:1fr}.basket-total{position:static}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {Component, computed, OnInit, signal} from '@angular/core';
 import {Order} from '../../../interfaces/order';
 import {BasketService} from '../../../services/basket-service';
 import {AuthService} from '../../../services/auth-service';
@@ -10,36 +10,44 @@ import {AuthService} from '../../../services/auth-service';
   styleUrl: './orders-component.css'
 })
 export class OrdersComponent implements OnInit{
-  orders: Order[] = []
-  type: string | null | false = false
+  readonly orders = signal<Order[]>([]);
+  readonly type = signal<string | null | false>(false);
+  readonly loading = signal(true);
+  readonly errorMessage = signal('');
+  readonly page = signal(1);
+  readonly pageSize = 12;
+  readonly paginatedOrders = computed(() => {
+    const start = (this.page() - 1) * this.pageSize;
+    return this.orders().slice(start, start + this.pageSize);
+  });
 
-  constructor(private basketService: BasketService, private cd: ChangeDetectorRef, private authService: AuthService) {}
+  constructor(private basketService: BasketService, private authService: AuthService) {}
 
   ngOnInit() {
-    this.type = this.authService.getType()
+    this.type.set(this.authService.getType())
 
-    if(this.type === 'admin'){
+    if(this.type() === 'admin'){
       this.basketService.getAllOrder().subscribe({
         next: (orders: Order[]) => {
-          this.orders = [...orders]; // forzar nueva referencia
-          console.log("PRODUCTOS RECIBIDOS", this.orders);
-          this.cd.detectChanges();
+          this.orders.set([...orders]);
+          this.loading.set(false);
         },
-        error: err => console.error("Error al cargar productos", err)
+        error: err => this.showLoadError(err)
       });
     }
     else{
       this.basketService.getAllOrderByUser().subscribe({
         next: (orders: Order[]) => {
-          this.orders = [...orders]; // forzar nueva referencia
-          console.log("PRODUCTOS RECIBIDOS", this.orders);
-          this.cd.detectChanges();
+          this.orders.set([...orders]);
+          this.loading.set(false);
         },
-        error: err => console.error("Error al cargar productos", err)
+        error: err => this.showLoadError(err)
       });
     }
+  }
 
-
-
+  private showLoadError(error: any) {
+    this.loading.set(false);
+    this.errorMessage.set(error?.error?.message ?? 'No se pudieron cargar tus pedidos. Inténtalo de nuevo.');
   }
 }

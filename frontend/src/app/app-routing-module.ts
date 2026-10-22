@@ -14,20 +14,21 @@ import {ManageUsersComponent} from './components/pages/manage-users-component/ma
 import {ManageOrdersComponent} from './components/pages/manage-orders-component/manage-orders-component';
 import {OrdersComponent} from './components/pages/orders-component/orders-component';
 import {AuthGuard} from './guards/auth-guard';
+import {AdminGuard} from './guards/admin-guard';
 import {ProcessOrderComponent} from './components/pages/process-order-component/process-order-component';
 
 const routes: Routes = [
   {path: 'login', component: LoginComponent},
-  {path: 'shop', component: ShopComponent, canActivate: [AuthGuard]},
+  {path: 'shop', component: ShopComponent},
   {path: 'basket', component: BasketComponent, canActivate: [AuthGuard]},
   {path: 'register', component: RegisterComponent},
   {path: 'admin-products', component: ManageProductsComponent, canActivate: [AuthGuard]},
   {path: 'admin-categories', component: ManageCategoriesComponent, canActivate: [AuthGuard]},
-  {path: 'admin-users', component: ManageUsersComponent, canActivate: [AuthGuard]},
-  {path: 'admin-orders', component: ManageOrdersComponent, canActivate: [AuthGuard]},
+  {path: 'admin-users', component: ManageUsersComponent, canActivate: [AuthGuard, AdminGuard]},
+  {path: 'admin-orders', component: ManageOrdersComponent, canActivate: [AuthGuard, AdminGuard]},
   {path: 'my-orders', component: OrdersComponent, canActivate: [AuthGuard]},
   {path: 'process-order/:id', component: ProcessOrderComponent, canActivate: [AuthGuard]},
-  {path: 'administration', component: AdminMainComponent, canActivate: [AuthGuard]},
+  {path: 'administration', component: AdminMainComponent, canActivate: [AuthGuard, AdminGuard]},
   {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
   {path: 'contact', component: ContactComponent, canActivate: [AuthGuard]},
   {path: '**', redirectTo: 'shop'}

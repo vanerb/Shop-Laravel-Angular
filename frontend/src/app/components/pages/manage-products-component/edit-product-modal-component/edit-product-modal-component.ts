@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, signal} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Category} from '../../../../interfaces/categories';
 import {CategoriesService} from '../../../../services/categories-service';
@@ -11,32 +11,38 @@ import { getImageUrl } from '../../../../helpers/utilities.helper';
   templateUrl: './edit-product-modal-component.html',
   styleUrl: './edit-product-modal-component.css'
 })
-export class EditProductModalComponent implements OnInit, AfterViewInit{
+export class EditProductModalComponent implements OnInit, AfterViewInit, OnDestroy{
   form!: FormGroup;
   product!: Product;
 
-  categories: Category[] = [];
+  readonly categories = signal<Category[]>([]);
 
   // Archivos nuevos seleccionados
-  selectedImagesGallery: File[] = [];
-  selectedImagesCover: File[] = [];
+  readonly selectedImagesGallery = signal<File[]>([]);
+  readonly selectedImagesCover = signal<File[]>([]);
+  readonly selectedCoverPreview = signal<string | null>(null);
+  readonly galleryPreviews = signal<{ file: File; url: string }[]>([]);
 
   // Imágenes existentes
-  existingGalleryImages: Images[] = [];
-  existingCoverImage: Images | null = null;
+  readonly existingGalleryImages = signal<Images[]>([]);
+  readonly existingCoverImage = signal<Images | null>(null);
 
   // Imágenes eliminadas
-  deletedGalleryImages: Images[] = [];
-  deletedCoverImage: boolean = false;
+  readonly deletedGalleryImages = signal<Images[]>([]);
+  readonly deletedCoverImage = signal(false);
 
   confirm!: (result?: any) => void;
   close!: () => void;
 
+  ngOnDestroy(): void {
+    const cover = this.selectedCoverPreview();
+    if (cover) URL.revokeObjectURL(cover);
+    this.galleryPreviews().forEach(preview => URL.revokeObjectURL(preview.url));
+  }
+
   constructor(
     private fb: FormBuilder,
     private readonly categoriesService: CategoriesService,
-    private cd: ChangeDetectorRef,
-
   ) {
     this.form = this.fb.group({
       name: ['', Validators.required],
@@ -59,11 +65,11 @@ export class EditProductModalComponent implements OnInit, AfterViewInit{
 
     // Separar imágenes existentes
     if (this.product?.images?.length) {
-      for (const el of this.product.images) {
+      for (const el of [...this.product.images].sort((a, b) => a.id - b.id)) {
         if (el.from === 'gallery') {
-          this.existingGalleryImages.push(el);
+          this.existingGalleryImages.update(images => [...images, el]);
         } else if (el.from === 'cover') {
-          this.existingCoverImage = el;
+          this.existingCoverImage.set(el);
         }
       }
     }
@@ -72,8 +78,7 @@ export class EditProductModalComponent implements OnInit, AfterViewInit{
   ngAfterViewInit() {
     this.categoriesService.getAllCategoriesByUser().subscribe({
       next: (categories: Category[]) => {
-        this.categories = [...categories];
-        this.cd.detectChanges();
+        this.categories.set(categories);
       },
       error: (err) => console.error("Error al cargar categorías", err)
     });
@@ -82,18 +87,25 @@ export class EditProductModalComponent implements OnInit, AfterViewInit{
   onCoverImageChange(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
-      this.selectedImagesCover = [input.files[0]]; // reemplaza la anterior
-      if (this.existingCoverImage) {
-        this.deletedCoverImage = true; // marcar portada existente como borrada
-        this.existingCoverImage = null;
+      const previousPreview = this.selectedCoverPreview();
+      if (previousPreview) URL.revokeObjectURL(previousPreview);
+      this.selectedImagesCover.set([input.files[0]]); // reemplaza la anterior
+      this.selectedCoverPreview.set(URL.createObjectURL(input.files[0]));
+      if (this.existingCoverImage()) {
+        this.deletedCoverImage.set(true); // marcar portada existente como borrada
+        this.existingCoverImage.set(null);
       }
+      input.value = '';
     }
   }
 
   onGalleryImagesChange(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
-      this.selectedImagesGallery.push(...Array.from(input.files));
+      const addedFiles = Array.from(input.files);
+      this.selectedImagesGallery.update(images => [...images, ...addedFiles]);
+      this.galleryPreviews.update(previews => [...previews, ...addedFiles.map(file => ({ file, url: URL.createObjectURL(file) }))]);
+      input.value = '';
     }
   }
 
@@ -101,27 +113,31 @@ export class EditProductModalComponent implements OnInit, AfterViewInit{
     return getImageUrl(image)
   }
 
-  delete(pos: number) {
-    const image = this.product.images[pos];
+  removeExistingGallery(image: Images): void {
+    this.deletedGalleryImages.update(images => [...images, image]);
+    this.existingGalleryImages.update(images => images.filter(item => item.id !== image.id));
+  }
 
-    if (image.from === 'gallery') {
-      const idx = this.existingGalleryImages.findIndex(e => e.id === image.id);
-      if (idx > -1) {
-        this.deletedGalleryImages.push(this.existingGalleryImages[idx]);
-        this.existingGalleryImages.splice(idx, 1);
-      } else {
-        this.selectedImagesGallery.splice(pos, 1);
-      }
-    } else if (image.from === 'cover') {
-      if (this.existingCoverImage) {
-        this.deletedCoverImage = true;
-        this.existingCoverImage = null;
-      } else {
-        this.selectedImagesCover = [];
-      }
-    }
+  removeExistingCover(): void {
+    if (!this.existingCoverImage()) return;
+    this.deletedCoverImage.set(true);
+    this.existingCoverImage.set(null);
+  }
 
-    this.product.images.splice(pos, 1);
+  removeSelectedCover(): void {
+    const preview = this.selectedCoverPreview();
+    if (preview) URL.revokeObjectURL(preview);
+    this.selectedCoverPreview.set(null);
+    this.selectedImagesCover.set([]);
+  }
+
+  removeSelectedGallery(file: File): void {
+    this.galleryPreviews.update(previews => {
+      const preview = previews.find(item => item.file === file);
+      if (preview) URL.revokeObjectURL(preview.url);
+      return previews.filter(item => item.file !== file);
+    });
+    this.selectedImagesGallery.update(images => images.filter(image => image !== file));
   }
 
   async urlToFile(url: string, filename: string, mimeType: string): Promise<File> {
@@ -140,22 +156,22 @@ export class EditProductModalComponent implements OnInit, AfterViewInit{
     formData.append('category_id', this.form.get('category_id')?.value);
 
     // Subir nueva portada
-    if (this.selectedImagesCover.length > 0) {
-      formData.append('cover_image', this.selectedImagesCover[0], this.selectedImagesCover[0].name);
+    if (this.selectedImagesCover().length > 0) {
+      formData.append('cover_image', this.selectedImagesCover()[0], this.selectedImagesCover()[0].name);
     }
 
     // Subir nuevas imágenes de galería
-    this.selectedImagesGallery.forEach(img => formData.append('images[]', img));
+    this.selectedImagesGallery().forEach(img => formData.append('images[]', img));
 
     // IDs de imágenes existentes que se mantienen
-    this.existingGalleryImages.forEach(img => formData.append('existing_images[]', img.id.toString()));
-    if (this.existingCoverImage) {
-      formData.append('existing_cover_image', this.existingCoverImage.id.toString());
+    this.existingGalleryImages().forEach(img => formData.append('existing_images[]', img.id.toString()));
+    if (this.existingCoverImage()) {
+      formData.append('existing_cover_image', this.existingCoverImage()!.id.toString());
     }
 
     // Imágenes eliminadas
-    this.deletedGalleryImages.forEach(img => formData.append('deleted_images[]', img.id.toString()));
-    if (this.deletedCoverImage) {
+    this.deletedGalleryImages().forEach(img => formData.append('deleted_images[]', img.id.toString()));
+    if (this.deletedCoverImage()) {
       formData.append('deleted_cover_image', '1');
     }
 

@@ -1,49 +1,15 @@
 <app-container-component>
-  <div style="width: 100%; height: 100%;">
-    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center">
-      <div style="width: 800px; padding: 20px; border-radius: 5px">
-
-        <form style="width: 100%; height: 100%;">
-
-          <div style="width: 100%; text-align: center; color: white">
-            <span style="font-size: 24px; font-weight: bold">Contacto</span>
-          </div>
-          <div style="height: 100%; width: 100%;">
-            <div style="display: flex; flex-direction: column; margin-top: 20px">
-              <label class="text-primary" style="color: white" for="name">Nombre</label>
-              <input style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 1px var(--background-one) solid"
-                     type="text" id="name" placeholder="Introduzca un nombre válido">
-            </div>
-
-            <div style="display: flex; flex-direction: column; margin-top: 20px">
-              <label style="color: white" class="text-primary" for="email">Email</label>
-              <input style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 1px var(--background-one) solid"
-                     type="email" id="email" placeholder="Introduzca un correo válido">
-            </div>
-
-            <div style="display: flex; flex-direction: column; margin-top: 20px">
-              <label style="color: white" class="text-primary" for="description">Consulta</label>
-              <textarea style="padding: 8px; margin-top: 8px; border-radius: 5px; border: 1px var(--background-one) solid"
-                        type="text" id="description" placeholder="Introduzca la consulta" rows="15"></textarea>
-            </div>
-
-
-          </div>
-          <div style="width: 100%; margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
-
-            <div style="width: 100%; display: flex; justify-content: end; align-items: center">
-
-              <button
-                style="background-color: #0f5132; color: white; border-radius: 10px; border: 1px #0f5132 solid; cursor: pointer; height: 40px;padding-right: 16px; padding-left: 16px">
-                Enviar
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-
-  </div>
+  <main class="contact-page">
+    <section class="contact-card">
+      <div class="contact-heading"><span>ESTAMOS AL OTRO LADO</span><h1>Hablemos<br><em>tranquilamente.</em></h1><p>Cuéntanos qué necesitas. Nos encantará leerte.</p></div>
+      <form (submit)="$event.preventDefault()">
+        <label>Nombre<input type="text" id="name" autocomplete="name" placeholder="Tu nombre"></label>
+        <label>Correo electrónico<input type="email" id="email" autocomplete="email" placeholder="nombre@correo.com"></label>
+        <label>¿En qué podemos ayudarte?<textarea id="description" placeholder="Escribe aquí tu consulta" rows="5"></textarea></label>
+        <button type="submit">Enviar mensaje <span aria-hidden="true">↗</span></button>
+        <small>Respondemos de lunes a viernes, normalmente en menos de 24 horas.</small>
+      </form>
+    </section>
+    <aside class="contact-art"><span>NOVA / CONTACTO</span><div>✳</div><h2>Las buenas<br>conversaciones<br><em>empiezan aquí.</em></h2></aside>
+  </main>
 </app-container-component>
-
-

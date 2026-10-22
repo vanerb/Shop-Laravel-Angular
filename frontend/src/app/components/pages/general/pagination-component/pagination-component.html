@@ -1,0 +1,8 @@
+<nav class="pagination" *ngIf="totalItems() > pageSize()" aria-label="Paginación">
+  <span class="pagination-summary">{{ firstItem() }}–{{ lastItem() }} de {{ totalItems() }}</span>
+  <div class="pagination-controls">
+    <button type="button" aria-label="Página anterior" [disabled]="currentPage() <= 1" (click)="goTo(currentPage() - 1)">‹</button>
+    <button *ngFor="let page of pageNumbers()" type="button" [class.is-current]="page === currentPage()" [attr.aria-current]="page === currentPage() ? 'page' : null" [attr.aria-label]="'Página ' + page" (click)="goTo(page)">{{ page }}</button>
+    <button type="button" aria-label="Página siguiente" [disabled]="currentPage() >= pageCount()" (click)="goTo(currentPage() + 1)">›</button>
+  </div>
+</nav>

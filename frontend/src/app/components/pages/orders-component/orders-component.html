@@ -1,27 +1,20 @@
 <app-container-component>
-  <div style="width: 100%; height: 100%;color: white">
-    <table style="width: 100%">
-      <thead style="width: 100%">
-      <tr style="width: 100%; ">
-        <th>Name</th>
-        <th>Email</th>
-        <th>Dirección</th>
-        <th>Ciudad</th>
-        <th>Codigo postal</th>
-        <th>Estado</th>
-      </tr>
-      </thead>
+  <main class="orders-page">
+    <header class="orders-heading">
+      <div><span>MI CUENTA / HISTORIAL</span><h1>Tus <em>pedidos.</em></h1><p>Un resumen de tus compras y su estado.</p></div>
+      <a routerLink="/shop">Seguir explorando <span aria-hidden="true">↗</span></a>
+    </header>
 
-      <tbody style="width: 100%; text-align: center">
-      <tr style="height: 40px" *ngFor="let order of orders">
-        <td>{{ order.name }}</td>
-        <td>{{ order.email }}</td>
-        <td>{{ order.direction }}</td>
-        <td>{{ order.city }}</td>
-        <td>{{ order.zip }}</td>
-        <td>{{ order.status }}</td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
+    <p class="orders-message" *ngIf="loading()" role="status">Cargando tus pedidos…</p>
+    <p class="orders-message orders-error" *ngIf="!loading() && errorMessage()" role="alert">{{ errorMessage() }}</p>
+    <section class="orders-list" *ngIf="!loading() && !errorMessage() && orders().length">
+      <article class="order-card" *ngFor="let order of paginatedOrders()">
+        <div class="order-topline"><span class="order-id">PEDIDO #{{ order.id }}</span><span class="order-status" [class.status-complete]="order.status === 'completed' || order.status === 'completado'">{{ order.status || 'Pendiente' }}</span></div>
+        <div class="order-main"><div><span>ENTREGA A</span><h2>{{ order.name }}</h2><p>{{ order.direction }}, {{ order.city }} {{ order.zip }}</p><p>{{ order.country }} · {{ order.email }}</p></div><div class="order-total"><span>TOTAL</span><strong>{{ order.total }} €</strong></div></div>
+        <footer class="order-footer"><span>Realizado el {{ order.created_at | date:'d MMM y' }}</span><span>Pedido {{ order.basket_id }}</span></footer>
+      </article>
+    </section>
+    <app-pagination [totalItems]="orders().length" [pageSize]="pageSize" [currentPage]="page()" (pageChange)="page.set($event)"></app-pagination>
+    <section class="orders-empty" *ngIf="!loading() && !errorMessage() && !orders().length"><span>✳</span><h2>Aún no tienes pedidos</h2><p>Cuando completes una compra, aparecerá aquí.</p><a routerLink="/shop">Ir a la tienda <span>↗</span></a></section>
+  </main>
 </app-container-component>
