@@ -44,6 +44,7 @@ import { AddUserComponent } from './components/pages/manage-users-component/add-
 import { PaginationComponent } from './components/pages/general/pagination-component/pagination-component';
 import { LoadingModalComponent } from './components/pages/general/loading-modal-component/loading-modal-component';
 import { loadingInterceptor } from './services/loading-interceptor';
+import { shopDemoInterceptor } from './services/shop-demo.interceptor';
 
 @NgModule({
   declarations: [
@@ -90,7 +91,7 @@ import { loadingInterceptor } from './services/loading-interceptor';
     ReactiveFormsModule,
   ],
   providers: [
-    provideHttpClient(withFetch(), withInterceptors([loadingInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([shopDemoInterceptor, loadingInterceptor])),
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideClientHydration(withEventReplay())
