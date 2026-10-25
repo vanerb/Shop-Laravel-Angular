@@ -1,7 +1,7 @@
 import { HttpErrorResponse, HttpInterceptorFn, HttpResponse } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
 
-type AnyRecord = Record<string, any>;
+type AnyRecord = any;
 const KEY = 'shop-demo-state-v1';
 const iso = () => new Date().toISOString();
 
