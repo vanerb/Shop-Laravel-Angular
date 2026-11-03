@@ -5,7 +5,7 @@
       <h1>Lo bueno<br>se nota<span>.</span></h1>
       <p>Diseño que suma, detalles que duran. Encuentra aquí tus próximos favoritos.</p>
       <div class="hero-actions">
-        <a class="hero-button" href="#catalogo">Explorar productos <span aria-hidden="true">↘</span></a>
+        <a class="hero-button" href="#catalogo" (click)="scrollToCatalog($event)">Explorar productos <span aria-hidden="true">↘</span></a>
         <span class="hero-caption">Una tienda pequeña<br>para grandes hallazgos.</span>
       </div>
       <div class="hero-index"><span>01</span><span class="index-line"></span><span>SELECCIÓN ACTUAL</span></div>
@@ -18,7 +18,7 @@
       <div class="visual-tag"><span>DESTACADO</span><b>{{ products()[0]?.name || 'Diseño, sin complicaciones' }}</b><span class="tag-arrow">↗</span></div>
       <span class="visual-number">Nº 001</span>
     </div>
-    <div class="hero-bottom"><span>DISEÑO · OBJETOS · VIDA</span><a href="#catalogo">DESCUBRE LA COLECCIÓN <span>↓</span></a></div>
+    <div class="hero-bottom"><span>DISEÑO · OBJETOS · VIDA</span><a href="#catalogo" (click)="scrollToCatalog($event)">DESCUBRE LA COLECCIÓN <span>↓</span></a></div>
   </section>
 
   <section class="value-strip" aria-label="Nuestra selección">
@@ -49,5 +49,5 @@
       <div class="empty-state"><span>{{ loading() ? '✳' : '⌕' }}</span><h3>{{ loading() ? 'Cargando hallazgos...' : 'No hay resultados' }}</h3><p>{{ loading() ? 'Enseguida estará lista la selección.' : 'Prueba con otro nombre o categoría.' }}</p></div>
     </ng-template>
   </section>
-  <footer class="shop-footer"><a class="footer-brand" routerLink="/shop">NOVA<span>®</span></a><span>Diseño para estar, usar y disfrutar.</span><a href="#catalogo">VOLVER ARRIBA ↑</a></footer>
+  <footer class="shop-footer"><a class="footer-brand" routerLink="/shop">NOVA<span>®</span></a><span>Diseño para estar, usar y disfrutar.</span><a href="#catalogo" (click)="scrollToCatalog($event)">VOLVER ARRIBA ↑</a></footer>
 </main>

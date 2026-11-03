@@ -9,7 +9,7 @@
     <p class="orders-message orders-error" *ngIf="!loading() && errorMessage()" role="alert">{{ errorMessage() }}</p>
     <section class="orders-list" *ngIf="!loading() && !errorMessage() && orders().length">
       <article class="order-card" *ngFor="let order of paginatedOrders()">
-        <div class="order-topline"><span class="order-id">PEDIDO #{{ order.id }}</span><span class="order-status" [class.status-complete]="order.status === 'completed' || order.status === 'completado'">{{ order.status || 'Pendiente' }}</span></div>
+        <div class="order-topline"><span class="order-id">PEDIDO #{{ order.id }}</span><span class="order-status" [class.status-complete]="order.status === 'completed' || order.status === 'completado'">{{ statusLabel(order.status) }}</span></div>
         <div class="order-main"><div><span>ENTREGA A</span><h2>{{ order.name }}</h2><p>{{ order.direction }}, {{ order.city }} {{ order.zip }}</p><p>{{ order.country }} · {{ order.email }}</p></div><div class="order-total"><span>TOTAL</span><strong>{{ order.total }} €</strong></div></div>
         <footer class="order-footer"><span>Realizado el {{ order.created_at | date:'d MMM y' }}</span><span>Pedido {{ order.basket_id }}</span></footer>
       </article>

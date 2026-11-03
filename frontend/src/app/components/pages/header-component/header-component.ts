@@ -1,5 +1,6 @@
 import { Component, ElementRef, HostListener, OnInit, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
 import { AuthService } from '../../../services/auth-service';
 
 @Component({
@@ -21,6 +22,14 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.refreshSession();
+    // Tras iniciar o cerrar sesión se navega a otra ruta: así el menú refleja el estado actual.
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      if (this.isLoggedIn() !== this.authService.isLoggedIn()) this.refreshSession();
+    });
+  }
+
+  private refreshSession(): void {
     this.isLoggedIn.set(this.authService.isLoggedIn());
     this.type.set(this.authService.getType());
     if (!this.isLoggedIn()) return;

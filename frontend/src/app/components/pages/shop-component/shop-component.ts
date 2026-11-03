@@ -47,6 +47,12 @@ export class ShopComponent implements OnInit {
 
   constructor(private productsService: ProductsService) {}
 
+  // Con rutas hash (demo) un href="#catalogo" cambiaría de ruta, así que el desplazamiento se hace a mano.
+  scrollToCatalog(event: Event) {
+    event.preventDefault();
+    document.getElementById('catalogo')?.scrollIntoView({behavior: 'smooth'});
+  }
+
    ngOnInit() {
       this.productsService.getAllProducts().subscribe({
         next: (products: Product[]) => {

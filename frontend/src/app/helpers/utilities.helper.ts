@@ -31,7 +31,10 @@ export function calculateTotal(items: Product[]){
 }
 
 export function getImageUrl(image: Images | undefined) {
-  return image ? `${API_ORIGIN}/image/${image.path.replace(/^images\//, '')}` : '/assets/product-placeholder.svg';
+  if (!image?.path) return 'assets/product-placeholder.svg';
+  // La demo estática guarda las imágenes en el navegador como data URL.
+  if (image.path.startsWith('data:')) return image.path;
+  return `${API_ORIGIN}/image/${image.path.replace(/^images\//, '')}`;
 }
 
 export function getProductCoverImage(images: Images[] | undefined): Images | undefined {

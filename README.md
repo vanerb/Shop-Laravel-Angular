@@ -9,6 +9,8 @@
 
 **Una tienda de portfolio de principio a fin:** catálogo, cesta, pedidos y administración.
 
+**[Probar la demo](https://vanerb.github.io/Shop-Laravel-Angular/)**
+
 </div>
 
 ## Sobre el proyecto
@@ -16,6 +18,19 @@
 Aplicación web que simula la experiencia de una tienda online. El frontend Angular consume una API REST desarrollada con Laravel; para ejecutarla en local, los datos se guardan en SQLite.
 
 > Es una simulación: no procesa pagos reales ni se conecta con una pasarela de pago.
+
+## Demo en GitHub Pages
+
+La [demo publicada](https://vanerb.github.io/Shop-Laravel-Angular/) funciona sin servidor: la configuración de build `demo` sustituye la API de Laravel por una simulada en el navegador (`frontend/src/app/demo/`) con datos de muestra que se guardan en `localStorage`.
+
+| Cuenta | Correo | Contraseña |
+| --- | --- | --- |
+| Cliente | `cliente@shop.demo` | `Demo1234` |
+| Administración | `admin@shop.demo` | `Demo1234` |
+
+También puedes registrar cuentas nuevas. El aviso de la parte inferior tiene un botón para volver a los datos iniciales. Se publica con el workflow `.github/workflows/deploy-demo.yml` en cada push a `master` que toque `frontend/`.
+
+Para probarla en local, desde `frontend`: `npm run start:demo` (o `npm run build:demo` para generar la versión estática).
 
 ## Qué puedes hacer
 
@@ -87,7 +102,7 @@ Visita `http://localhost:4200`. En local, la configuración CORS permite `localh
 
 ## Activar el panel de administración
 
-Regístrate desde la tienda. Las cuentas nuevas son usuarios normales; no hay una cuenta admin ni credenciales de demostración preconfiguradas.
+Regístrate desde la tienda. Las cuentas nuevas son usuarios normales; con el backend real no hay una cuenta admin ni credenciales preconfiguradas (las de arriba solo existen en la demo).
 
 En otra terminal, abre Tinker desde `backend`:
 
@@ -117,6 +132,7 @@ php artisan test
 ```text
 backend/                                  API, migraciones y almacenamiento
 frontend/                                 Aplicación Angular
+frontend/src/app/demo/                    API simulada y aviso de la demo estática
 docs/portfolio-banner.svg                 Cabecera visual de este README
 ShopLaravelAngular.postman_collection.json Colección de peticiones de la API
 ```

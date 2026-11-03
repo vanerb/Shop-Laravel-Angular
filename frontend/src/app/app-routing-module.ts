@@ -15,6 +15,7 @@ import {ManageOrdersComponent} from './components/pages/manage-orders-component/
 import {OrdersComponent} from './components/pages/orders-component/orders-component';
 import {AuthGuard} from './guards/auth-guard';
 import {AdminGuard} from './guards/admin-guard';
+import {environment} from '../environments/environment';
 import {ProcessOrderComponent} from './components/pages/process-order-component/process-order-component';
 
 const routes: Routes = [
@@ -35,7 +36,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {useHash: environment.demo})],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

@@ -46,6 +46,10 @@ export class OrdersComponent implements OnInit{
     }
   }
 
+  statusLabel(status: string): string {
+    return ({ pending: 'Pendiente', processing: 'En preparación', completed: 'Completado', cancelled: 'Cancelado' } as Record<string, string>)[status] || status || 'Pendiente';
+  }
+
   private showLoadError(error: any) {
     this.loading.set(false);
     this.errorMessage.set(error?.error?.message ?? 'No se pudieron cargar tus pedidos. Inténtalo de nuevo.');

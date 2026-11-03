@@ -1,0 +1,75 @@
+name: Desplegar demo en GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/deploy-demo.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Instalar dependencias
+        working-directory: frontend
+        run: npm ci
+
+      # Configuración «demo»: sin SSR y con la API simulada en el navegador.
+      - name: Compilar la demo estática
+        working-directory: frontend
+        run: npx ng build --configuration production,demo --base-href /Shop-Laravel-Angular/
+
+      # Las rutas usan hash (#/...); un enlace sin hash (/Shop-Laravel-Angular/basket) se reenvía a #/basket.
+      - name: Añadir 404.html
+        run: |
+          cat > frontend/dist/frontend/browser/404.html <<'EOF'
+          <!doctype html>
+          <meta charset="utf-8">
+          <title>Nativa</title>
+          <script>
+            var base = '/Shop-Laravel-Angular';
+            var route = location.pathname.indexOf(base) === 0 ? location.pathname.slice(base.length) : '/';
+            location.replace(base + '/#' + (route || '/') + location.search);
+          </script>
+          EOF
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Subir la build
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist/frontend/browser
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publicar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
