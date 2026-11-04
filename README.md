@@ -88,6 +88,18 @@ php artisan serve --host=127.0.0.1 --port=8000
 
 La API queda en `http://127.0.0.1:8000/api`. Mantén esa terminal abierta.
 
+#### Datos de prueba con MySQL (opcional)
+
+Por defecto el proyecto usa SQLite y arranca vacío. Si quieres datos inventados, [`database/shop_prueba.sql`](database/shop_prueba.sql) crea la base `shop_demo` en MySQL o MariaDB con sus tablas, productos y pedidos. No borra nada: si las tablas ya existen, la importación se detiene con un error. Desde la raíz del repositorio:
+
+```bash
+mysql -u root -p --default-character-set=utf8mb4 -e "source database/shop_prueba.sql"
+```
+
+Después, en `backend/.env`, pon `DB_CONNECTION=mysql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE=shop_demo`, `DB_USERNAME` y `DB_PASSWORD`.
+
+Cuentas: `admin@shop.test` (administración), `clara@shop.test` y `tomas@shop.test`. La contraseña de todas es `Usuario123*`. Es pública, así que no uses estas cuentas fuera de un entorno local.
+
 ### 2. Instalar y arrancar Angular
 
 Abre otra terminal PowerShell desde la raíz:
