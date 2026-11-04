@@ -38,7 +38,7 @@ jobs:
       # Configuración «demo»: sin SSR y con la API simulada en el navegador.
       - name: Compilar la demo estática
         working-directory: frontend
-        run: npx ng build --configuration production,demo --base-href /Shop-Laravel-Angular/
+        run: npx ng build --configuration production,demo --base-href "/${{ github.event.repository.name }}/"
 
       # Las rutas usan hash (#/...); un enlace sin hash (/Shop-Laravel-Angular/basket) se reenvía a #/basket.
       - name: Añadir 404.html

@@ -9,7 +9,7 @@
 
 **Una tienda de portfolio de principio a fin:** catálogo, cesta, pedidos y administración.
 
-**[Probar la demo](https://vanerb.github.io/Shop-Laravel-Angular/)**
+**[Probar la demo](https://vanerb.github.io/shop-laravel-angular/)**
 
 </div>
 
@@ -21,7 +21,7 @@ Aplicación web que simula la experiencia de una tienda online. El frontend Angu
 
 ## Demo en GitHub Pages
 
-La [demo publicada](https://vanerb.github.io/Shop-Laravel-Angular/) funciona sin servidor: la configuración de build `demo` sustituye la API de Laravel por una simulada en el navegador (`frontend/src/app/demo/`) con datos de muestra que se guardan en `localStorage`.
+La [demo publicada](https://vanerb.github.io/shop-laravel-angular/) funciona sin servidor: la configuración de build `demo` sustituye la API de Laravel por una simulada en el navegador (`frontend/src/app/demo/`) con datos de muestra que se guardan en `localStorage`.
 
 | Cuenta | Correo | Contraseña |
 | --- | --- | --- |
