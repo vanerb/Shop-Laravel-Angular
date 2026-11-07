@@ -1,154 +1,129 @@
-<div align="center">
+# Shop
 
-![Tienda online simulada: proyecto de portfolio con Angular y Laravel](docs/portfolio-banner.svg)
+Tienda online simulada de principio a fin: catálogo, cesta, pedidos y un panel de administración para gestionarlo todo. No procesa pagos reales.
 
-[![Angular 20](https://img.shields.io/badge/Angular-20-DD0031?logo=angular&logoColor=white)](https://angular.dev/)
-[![Laravel 12](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)](https://laravel.com/)
-[![PHP 8.2+](https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
-[![SQLite](https://img.shields.io/badge/SQLite-local-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
+**[Ver la demo](https://vanerb.github.io/shop-laravel-angular/)**: funciona en el navegador, sin instalar nada.
 
-**Una tienda de portfolio de principio a fin:** catálogo, cesta, pedidos y administración.
+![Shop: tienda online con Angular y Laravel](docs/portfolio-banner.svg)
 
-**[Probar la demo](https://vanerb.github.io/shop-laravel-angular/)**
-
-</div>
-
-## Sobre el proyecto
-
-Aplicación web que simula la experiencia de una tienda online. El frontend Angular consume una API REST desarrollada con Laravel; para ejecutarla en local, los datos se guardan en SQLite.
-
-> Es una simulación: no procesa pagos reales ni se conecta con una pasarela de pago.
-
-## Demo en GitHub Pages
-
-La [demo publicada](https://vanerb.github.io/shop-laravel-angular/) funciona sin servidor: la configuración de build `demo` sustituye la API de Laravel por una simulada en el navegador (`frontend/src/app/demo/`) con datos de muestra que se guardan en `localStorage`.
-
-| Cuenta | Correo | Contraseña |
-| --- | --- | --- |
-| Cliente | `cliente@shop.demo` | `Demo1234` |
-| Administración | `admin@shop.demo` | `Demo1234` |
-
-También puedes registrar cuentas nuevas. El aviso de la parte inferior tiene un botón para volver a los datos iniciales. Se publica con el workflow `.github/workflows/deploy-demo.yml` en cada push a `master` que toque `frontend/`.
-
-Para probarla en local, desde `frontend`: `npm run start:demo` (o `npm run build:demo` para generar la versión estática).
+**Stack:** Angular 20 · Signals y RxJS · Laravel 12 · PHP 8.2 · Sanctum · SQLite o MySQL
 
 ## Qué puedes hacer
 
-| En la tienda | En administración |
-| --- | --- |
-| Explorar productos y categorías | Crear, editar y eliminar productos |
-| Crear una cuenta e iniciar sesión | Gestionar categorías |
-| Añadir productos a la cesta y finalizar un pedido | Consultar y gestionar pedidos |
-| Editar el perfil y consultar pedidos anteriores | Administrar usuarios |
-| Ver imágenes y detalles de cada producto | Subir y actualizar imágenes |
+- **Tienda:** explorar productos por categoría, con sus imágenes y detalles.
+- **Cesta y pedidos:** añadir y quitar productos, finalizar el pedido con los datos de envío y consultar los pedidos anteriores.
+- **Cuenta:** registro, inicio de sesión, edición del perfil y cambio de contraseña.
+- **Administración:** crear, editar y borrar productos y categorías, subir imágenes, gestionar pedidos y administrar usuarios.
 
-Las operaciones privadas usan autenticación con Laravel Sanctum. El backend calcula el total del pedido al confirmarlo.
+Ver el catálogo es público; comprar exige iniciar sesión y la administración, una cuenta de administrador.
+
+## Demo
+
+La demo es el frontend compilado en modo `demo`: la API de Laravel se sustituye por una simulada dentro del navegador (`frontend/src/app/demo/`). Tus cambios se guardan en el `localStorage` de tu navegador y el botón del aviso inferior vuelve a los datos iniciales.
+
+| Correo | Tipo de cuenta |
+| --- | --- |
+| `cliente@shop.demo` | Cliente |
+| `admin@shop.demo` | Administración |
+
+La contraseña de las dos es `Demo1234`. También puedes registrar cuentas nuevas.
 
 ## Cómo está construido
 
 ```mermaid
 flowchart LR
-    Cliente[Angular 20<br/>Signals y RxJS] -->|HTTP / JSON| API[Laravel 12<br/>API REST + Sanctum]
-    API --> DB[(SQLite local)]
-    API --> Media[Almacenamiento de imágenes]
+    A[Angular 20] -->|REST y token de Sanctum| B[API Laravel 12]
+    B --> C[(SQLite o MySQL)]
+    B --> D[/Imágenes en storage/]
+    A -.->|Build de demo| E[API simulada en el navegador]
+    E -.-> F[(localStorage)]
 ```
 
-## Ejecutarlo en local
+```text
+backend/       API de Laravel: controladores, modelos, migraciones y tests
+frontend/      Web de Angular y build de demo
+database/      Base de datos de prueba para MySQL
+docs/          Imagen de cabecera de este README
+ShopLaravelAngular.postman_collection.json   Colección de peticiones de la API
+```
 
-### Requisitos
+## Decisiones técnicas
 
-- PHP 8.2 o superior y Composer
-- Node.js y npm
-- PowerShell para usar los comandos de esta guía
+- **El total lo calcula el servidor.** Al confirmar un pedido, la API suma los precios de la base de datos; nunca se fía del total que envía el navegador.
+- **Cada cesta es de su dueño.** Las rutas privadas usan tokens de Sanctum y comprueban que la cesta, el perfil o el pedido pertenecen a quien los pide; la administración exige además el rol de administrador.
+- **Sin base de datos que instalar.** Por defecto usa SQLite, así que el proyecto arranca con un fichero local; para MySQL basta con cambiar las variables de entorno.
+- **Accesos limitados.** El registro y el inicio de sesión tienen límite de intentos por minuto.
 
-### 1. Instalar y preparar la API
+## Puesta en marcha
 
-Desde la carpeta raíz del proyecto:
+Necesitas PHP 8.2 o superior con Composer y Node.js 20.19 o superior. Los comandos de la API están escritos para PowerShell.
+
+**API**, en `http://127.0.0.1:8000/api`:
 
 ```powershell
 cd backend
 composer install
-
-if (-not (Test-Path .env)) {
-    Copy-Item .env.example .env
-}
-
-if (-not (Test-Path database/database.sqlite)) {
-    New-Item -ItemType File database/database.sqlite | Out-Null
-}
-
-if (Select-String -Path .env -Pattern '^APP_KEY=$' -Quiet) {
-    php artisan key:generate
-}
-
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+if (-not (Test-Path database/database.sqlite)) { New-Item -ItemType File database/database.sqlite | Out-Null }
+if (Select-String -Path .env -Pattern '^APP_KEY=$' -Quiet) { php artisan key:generate }
 php artisan migrate
 php artisan storage:link
 php artisan serve --host=127.0.0.1 --port=8000
 ```
 
-La API queda en `http://127.0.0.1:8000/api`. Mantén esa terminal abierta.
-
-#### Datos de prueba con MySQL (opcional)
-
-Por defecto el proyecto usa SQLite y arranca vacío. Si quieres datos inventados, [`database/shop_prueba.sql`](database/shop_prueba.sql) crea la base `shop_demo` en MySQL o MariaDB con sus tablas, productos y pedidos. No borra nada: si las tablas ya existen, la importación se detiene con un error. Desde la raíz del repositorio:
+**Web**, en `http://localhost:4200`, desde otra terminal:
 
 ```bash
-mysql -u root -p --default-character-set=utf8mb4 -e "source database/shop_prueba.sql"
-```
-
-Después, en `backend/.env`, pon `DB_CONNECTION=mysql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE=shop_demo`, `DB_USERNAME` y `DB_PASSWORD`.
-
-Cuentas: `admin@shop.test` (administración), `clara@shop.test` y `tomas@shop.test`. La contraseña de todas es `Usuario123*`. Es pública, así que no uses estas cuentas fuera de un entorno local.
-
-### 2. Instalar y arrancar Angular
-
-Abre otra terminal PowerShell desde la raíz:
-
-```powershell
 cd frontend
 npm install
 npm start
 ```
 
-Visita `http://localhost:4200`. En local, la configuración CORS permite `localhost:4200` y `127.0.0.1:4200`.
+Para abrir la demo en local, sin backend: `npm run start:demo`.
 
-## Activar el panel de administración
+### Configuración
 
-Regístrate desde la tienda. Las cuentas nuevas son usuarios normales; con el backend real no hay una cuenta admin ni credenciales preconfiguradas (las de arriba solo existen en la demo).
+La API se configura en `backend/.env`, que se crea a partir de `backend/.env.example`:
 
-En otra terminal, abre Tinker desde `backend`:
+| Variable | Por defecto | Uso |
+| --- | --- | --- |
+| `DB_CONNECTION` | `sqlite` | Motor de base de datos: `sqlite` o `mysql`. |
+| `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` | Sin valor | Conexión con MySQL, si se usa. |
+| `CORS_ALLOWED_ORIGINS` | `http://localhost:4200`, `http://127.0.0.1:4200` | Orígenes que pueden llamar a la API. |
 
-```powershell
+### Datos de prueba
+
+Con SQLite el proyecto arranca vacío. Para tener datos inventados, [`database/shop_prueba.sql`](database/shop_prueba.sql) crea la base `shop_demo` en MySQL o MariaDB con productos, categorías y pedidos. No borra nada: si las tablas ya existen, la importación se detiene con un error.
+
+```bash
+mysql -u root -p --default-character-set=utf8mb4 -e "source database/shop_prueba.sql"
+```
+
+Después, en `backend/.env`, pon `DB_CONNECTION=mysql`, `DB_DATABASE=shop_demo` y tus datos de conexión.
+
+Cuentas: `admin@shop.test` (administración), `clara@shop.test` y `tomas@shop.test`. La contraseña de todas es `Usuario123*`. Es pública, así que no uses estas cuentas fuera de un entorno local.
+
+Si empiezas con la base vacía, las cuentas que registras son de cliente. Para convertir una en administradora, desde `backend`:
+
+```bash
+php artisan tinker --execute="App\Models\User::where('email', 'tu-correo@example.com')->update(['type' => 'admin']);"
+```
+
+## Tests
+
+```bash
 cd backend
-php artisan tinker
-```
-
-En Tinker, cambia el rol de tu cuenta usando el correo con el que te registraste:
-
-```php
-App\Models\User::where('email', 'tu-correo@example.com')->update(['type' => 'admin']);
-```
-
-Vuelve a iniciar sesión y abre `/administration`.
-
-## Pruebas
-
-Desde la carpeta `backend`:
-
-```powershell
 php artisan test
 ```
 
-## Estructura
+Los tests de la API comprueban el registro y sus errores, el inicio de sesión, la compra con el total calculado en el servidor, que nadie pueda leer la cesta de otra persona, la edición del perfil y que la lista de usuarios solo la vea la administración.
 
-```text
-backend/                                  API, migraciones y almacenamiento
-frontend/                                 Aplicación Angular
-frontend/src/app/demo/                    API simulada y aviso de la demo estática
-docs/portfolio-banner.svg                 Cabecera visual de este README
-ShopLaravelAngular.postman_collection.json Colección de peticiones de la API
-```
+## Limitaciones conocidas
 
-## Alcance
+- Es una simulación: no se conecta con ninguna pasarela de pago.
+- El frontend no tiene tests propios, solo las pruebas que genera Angular.
+- La base SQLite y las imágenes se guardan en el equipo, así que un despliegue real necesitaría base de datos y almacenamiento propios.
 
-Está preparado como proyecto de portfolio para desarrollo local. La base SQLite y las imágenes subidas se guardan en el equipo y se excluyen de Git. Para publicarlo como servicio habría que configurar una base de datos y almacenamiento adecuados, CORS y las variables de entorno de producción.
+## Autoría
+
+Proyecto de portfolio de **Vanesa Ribera Bautista** ([vanerb](https://github.com/vanerb)).
